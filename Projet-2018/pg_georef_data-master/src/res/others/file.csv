@@ -1,0 +1,33 @@
+,Données locales relatives aux livraisons d'électricité - année 2013,Unnamed: 1,Unnamed: 2,Unnamed: 3,Unnamed: 4,Unnamed: 5
+0,,,,,,
+1,,,,,,
+2,,,,,,
+3,,,,,,
+4,,,,,,
+5,,,,,,
+6,,,,,,
+7,,,,,,
+8,,,,,,
+9,,,,,,
+10,,,,,,
+11,,,,,,
+12,,,,,,
+13,,,,,,
+14,,,,,,
+15,,,,,,
+16,,,,,,
+17,,,,,,
+18,,,,,,
+19,,,,,,
+20,,,,,,
+21,Variable,,,,Description,Unité
+22,NUMCOM,,,,Numéro Insee de la commune,
+23,NOMCOM,,,,Nom de la commune,
+24,PDLBT1,,,,"Nombre de points de livraison en basse tension pour une puissance inférieure ou égale à 36 kVA, en fin d'année",sans unité
+25,PDLBT2,,,,"Nombre de points de livraison en basse tension pour une puissance supérieure à 36 kVA, en fin d'année",sans unité
+26,PDLHTA,,,,"Nombre de points de livraison en haute tension A, en fin d'année",sans unité
+27,COTBT1,,,,Consommation totale en basse tension pour une puissance inférieure ou égale à 36 kVA,MWh
+28,COTBT2,,,,Consommation totale en basse tension pour une puissance supérieure à 36 kVA,MWh
+29,COTHTA,,,,Consommation totale en haute tension A,MWh
+30,,,,,,
+31,Source : SOeS d'après ELD/GRD,,,,,

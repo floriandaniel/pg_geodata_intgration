@@ -1,0 +1,157 @@
+\documentclass[french,12pt]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{babel}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{afterpage}
+\usepackage[margin=3em]{geometry}
+\usepackage{color}
+\usepackage[svgnames]{xcolor}
+\usepackage{textcomp}
+\usepackage{listingsutf8}
+\usepackage{pdfpages}
+\usepackage[linkbordercolor=teal]{hyperref}
+\usepackage{glossaries} %https://tex.stackexchange.com/questions/133269/how-to-update-glossaries-package-on-ubuntu-12-10#133544
+
+%https://tex.stackexchange.com/questions/10141/how-to-prevent-lstlisting-from-splitting-code-between-pages#10145
+\lstnewenvironment{Code}[1][]{
+   \noindent
+   \minipage{\linewidth}
+   \vspace{0.5\baselineskip}
+   \lstset{
+   % https://stackoverflow.com/questions/586572/make-code-in-latex-look-nice
+   % https://tex.stackexchange.com/questions/50107/adjust-bottom-margin-of-a-listing-environment#50108
+   % https://en.wikibooks.org/wiki/LaTeX/Source_Code_Listings
+     aboveskip=\bigskipamount,
+     keywordstyle=\color{RoyalBlue},
+     basicstyle=\scriptsize\ttfamily,
+     commentstyle=\color{Green}\ttfamily,
+     rulecolor=\color{black},
+     upquote=true,
+     numbers=left,
+     numberstyle=\tiny\color{gray},
+     stepnumber=1,
+     numbersep=8pt,
+     showstringspaces=false,
+     breaklines=true,
+     frameround=ftff,
+     frame=single, %shadowbox
+     inputencoding=utf8/latin1,
+     language=Python,
+     #1,
+   }
+}{\endminipage}
+
+\parindent=2.2em
+\parskip=.7em
+\renewcommand{\FrenchLabelItem}{\textbullet}
+\renewcommand{\UrlFont}{\ttfamily\scriptsize}
+%\renewcommand{\glstextformat}[1]{\textcolor{blue}{#1}} % couleur des liens vers le glossaire
+
+%https://tex.stackexchange.com/questions/63390/how-to-decrease-spacing-before-chapter-title#63393
+\makeatletter
+\def\@makechapterhead#1{%
+  %%%%\vspace*{50\p@}% %%% removed!
+  {\parindent \z@ \raggedright \normalfont
+    \ifnum \c@secnumdepth >\m@ne
+        \huge\bfseries \@chapapp\space \thechapter
+        \par\nobreak
+        \vskip 20\p@
+    \fi
+    \interlinepenalty\@M
+    \Huge \bfseries #1\par\nobreak
+    \vskip 40\p@
+  }}
+\def\@makeschapterhead#1{%
+  %%%%%\vspace*{50\p@}% %%% removed!
+  {\parindent \z@ \raggedright
+    \normalfont
+    \interlinepenalty\@M
+    \Huge \bfseries  #1\par\nobreak
+    \vskip 20\p@
+  }}
+\makeatother
+
+\newcommand{\projectroot}{../../../..}
+\newcommand{\srcroot}{\projectroot/src}
+\newcommand{\srcpyroot}{\srcroot/python}
+\newcommand{\srcresroot}{\srcroot/res}
+
+\newcommand{\rapportroot}{\projectroot/documents/out/rendus/rapport}
+\newcommand{\rapportresroot}{\rapportroot/res}
+\graphicspath{{\rapportresroot/img/}}
+\newcommand{\txtroot}{\rapportresroot/txt}
+
+\newcommand{\cdcpath}{../cahier_des_charges/cahier_des_charges.pdf}
+\newcommand{\usermanualpath}{\projectroot/documents/out/reflexions/procedures/utilisation/manuel_utilisateur}
+
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\iut}{\bsc{IUT} }
+\newcommand{\dut}{\bsc{DUT} }
+\newcommand{\ifsttar}{\bsc{IFSTTAR} }
+
+\newcommand{\bbb}{
+  \bigskip\bigskip\bigskip
+}
+
+\newcommand{\blankpage}{
+  \null
+  \thispagestyle{empty}
+  \clearpage
+}
+
+\newcommand{\astitle}[1]{
+  \Huge
+  \centerline{\textbf{#1}}
+  \normalsize
+}
+
+\input{\txtroot/1_debut/page_de_garde}
+\makeglossaries
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\pagenumbering{gobble}
+\input{\txtroot/3_fin/glossaire}
+
+\maketitle\clearpage
+\blankpage
+\input{\txtroot/1_debut/remerciements}
+\input{\txtroot/1_debut/asterisque}
+\input{\txtroot/1_debut/resume_abstract}
+\input{\txtroot/1_debut/table_des_matieres}
+
+\chapter*{Introduction}
+  \input{\txtroot/2_milieu/introduction}
+
+\chapter{Contextualisation du stage}
+  \input{\txtroot/2_milieu/contextualisation_du_stage}
+
+\chapter{Scripts shell d'installation}
+  \input{\txtroot/2_milieu/scripts_shell_d_installation}
+
+\chapter{Interactions utilisateur : fichiers de configuration}
+  \input{\txtroot/2_milieu/fichiers_de_configuration}
+
+\chapter{Applicatif Python}
+  \input{\txtroot/2_milieu/applicatif_python}
+
+\chapter*{Conclusion}
+  \input{\txtroot/2_milieu/conclusion}
+
+\pagenumbering{gobble}\printglossaries\clearpage
+  \addcontentsline{toc}{chapter}{Glossaire}
+
+\chapter*{Sources}
+  \input{\txtroot/3_fin/sources}
+
+\chapter*{Annexes}
+  \input{\txtroot/3_fin/annexes}
+
+\end{document}

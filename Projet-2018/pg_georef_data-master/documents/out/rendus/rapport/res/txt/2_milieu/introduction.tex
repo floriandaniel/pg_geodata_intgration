@@ -1,0 +1,68 @@
+\addcontentsline{toc}{chapter}{Introduction}
+
+\pagenumbering{arabic}
+
+\section*{Contexte}
+  \addcontentsline{toc}{section}{Contexte}
+
+Dans le cadre de ma formation de \dut, un stage doit être réalisé. D'une durée de dix semaines, il doit permettre de se construire une première expérience du monde du travail en informatique. Il vise également à constituer l'occasion de mettre en pratique les connaissances accumulées tout au long de la formation.
+
+\section*{Objectif du stage}
+  \addcontentsline{toc}{section}{Objectif du stage}
+
+Au sein de l'\bsc{\gls{IFSTTAR}}* sont menées des recherches traitant de problématiques sur l'aménagement du territoire et le transport. Ces recherches nécessitent l'utilisation de données socio-économiques géoréférencées. À l'heure actuelle les tâches de récupération, pré-traitement, stockage et filtrage effectuées sur les données sont réalisées manuellement.
+
+De ce fait, ce stage a pour but de venir répondre à cette problématique avec la réalisation d'un outil de création d'une base de données géoréférencées. De façon plus générique, le développement de cette application a donc trait à l'exploitation de données. Cette application se positionne donc en amont des traitements, ici réalisés avec des logiciels de système d'information géographique.\bsc{\gls{SIG}}*.
+
+Le programme réalisé devra donc être en mesure de se charger de la récupération, du remodelage et de l'importation en base de données de données géographiques.
+
+\section*{Travail réalisé}
+  \addcontentsline{toc}{section}{Travail réalisé}
+
+  \subsection*{Recueil du besoin}
+    \addcontentsline{toc}{subsection}{Recueil du besoin}
+
+J'ai tout d'abord recueilli le besoin afin de bien comprendre les tenants et aboutissants du projet :
+
+\begin{itemize}
+\item les tâches à automatiser, c'est-à-dire la portée du sujet~;
+\item le profil d'un utilisateur de l'application~;
+\item les entrées utilisateur (quelles informations sont renseignées, lesquelles peuvent être omises)~;
+\item les éventuelles évolutions de l'applicatif à plus long terme.
+\end{itemize}
+
+  \subsection*{Conception du fichier de configuration des imports}
+    \addcontentsline{toc}{subsection}{Conception du fichier de configuration des imports}
+
+Nous avons conçu un fichier de configuration permettant de préciser exactement le comportement du programme qui est attendu par l'utilisateur sur cette donnée. Ce fichier, en format \bsc{JSON}, a le rôle d'une interface de communication avec l'utilisateur. C'est par le biais de ce fichier que l'utilisateur peut décider de quelle manière doit être remodelée une donnée, mais également de quelle manière elle doit être importée dans la base de données.
+
+  \subsection*{Modules de l'applicatif principal}
+    \addcontentsline{toc}{subsection}{Modules de l'applicatif principal}
+
+L'application est découpée en modules. Ce découpage est le résultat de l'isolation des différentes tâches à effectuer par le programme. En effet, ces tâches sont effectuées séquentiellement. On dénombre quatres modules.
+
+\begin{description}
+\item[data\_retrieving~:] téléchargement et extraction des données~;
+\item[data\_processing~:] recherche, parsage, remodelage des données~;
+\item[database~:] construction des requêtes et importation en base de données~;
+\item[utils~:] fonctions utilitaires, utilisées indifféremment par tous les modules.
+\end{description}
+
+  \subsection*{Scripts}
+    \addcontentsline{toc}{subsection}{Scripts}
+
+En parallèle du développement principal, j'ai réalisé un ensemble de scripts :
+
+\begin{description}
+\item[prepare\_database~(shell)~:] installe et configure une base de données PostgreSQL~;
+\item[prepare\_environment~(shell)~:] prépare l'environnement d'exécution~;
+\item[create\_venv~(shell)~:] crée le fichier décrivant l'environnement virtuel \gls{conda}*~;
+\item[excel2conf~(Python)~:] convertit un fichier excel spécifique en un fichier \bsc{\gls{JSON}} de configuration.
+\end{description}
+
+\section*{Technologies manipulées}
+  \addcontentsline{toc}{section}{Technologies manipulées}
+
+J'ai été amené à utiliser le langage de script bash afin de réaliser les scripts d'installation et de configuration. Je me suis également familiarisé avec le \bsc{\gls{SGBD}*} PostgreSQL et l'extension PostGIS. La réalisation du programme principal a été effectuée en Python.
+
+J'ai pour vœu de rapprocher, à terme, mon profil de celui d'un Data Scientist. En ce sens, ce stage constitue pour moi une expérience formidable. En effet, les langages tels que bash et Python sont assez répandus en science des données.

@@ -1,0 +1,204 @@
+\section{Présentation générale du problème}
+
+Les scripts d'installation ont répondu, en partie, à la problématique générale posée initialement : construire, à partir de zéro, une base de données géoréférencées. En effet, ce sont les installations automatisées qui vont permettre de "partir de zéro". Vient dorénavant la question de  l'import des données qui vont venir alimenter cette base de données géoréférencées.
+
+Les données géoréférencées qui nous intéressent ici sont hétérogènes et de qualité variables. En effet les données à disposition sont mises en ligne par différents organismes. On peut citer par exemple l'\bsc{\gls{INSEE}}*, l'\bsc{\gls{IGN}}*, OpenStreetMap ou encore la \bsc{\gls{CAF}}*. Cela induit le fait que les données peuvent être contenues dans des fichiers de formats variables comme le format \code{.shp}, le plus répandu, ou encore les formats \code{.mif/.mid} et \code{.geojson}. On trouve même des données, moins sujettes à du traitement automatique, par exemple des feuilles excel \code{.xls}. La variété des formalismes de chaque organisme rend difficile ces données à traiter, d'où l'intérêt de la création d'une base de données géoréférencées.
+
+Vient ensuite l'aspect géoréférencé des données : ils donnent lieu à des traitements spécifiques. En effet, il peut être nécessaire de reprojeter des données afin que les données soient homogènes au sein d'une même table en base. L'extension PostGIS, dans sa table \code{spatial\_ref\_sys}, répertorie plus de 5000 projections différentes. Enfin, la colonne \code{geometry} gérant l'aspect géoréférencé des données d'entrée n'est pas à même d'être importée en base en l'état : la représentation attendue par PostGIS diffère.
+
+\section{Finalité du projet}
+
+L'applicatif Python constitue l'outil principal, il est au cœur du projet. L'application à concevoir et développer devra permettre de répondre au problème posé, c'est-à-dire de remplir une base de données géoréférencées. Les imports en base doivent pouvoir être effectués de manière souple, mais contrôlée.
+
+De plus, les imports devront pouvoir s'effectuer de manière assistée, où les différentes actions effectuées ainsi que les problèmes rencontrés devront être indiqués.
+
+Enfin, la mise en œuvre de l'application permet d'omettre certains paramètres dans les fichiers de configuration d'import. En cela, le programme est automatisé. Néanmoins, il reste soumis à la demande de l'utilisateur : le script n'est pas voué à se lancer tout seul à intervalles régulièrs, à l'aide de \code{cron} par exemple. Les tâches de vérification de nouvelles parutions de données restent manuelles. Ainsi les données stockées au sein de la base peuvent être mises-à-jour ou non au bon vouloir de l'utilisateur. C'est seulement alors qu'interviendra l'utilisateur afin de préciser les imports qu'il souhaite effectuer.
+
+\section{Fonctionnalités attendues}
+  \subsection{Paramétrabilité et facilité d'utilisation}
+
+L'utilisateur ne fait que déléguer à l'application les traitements à effectuer, ce qui ne le dispense pas de renseigner des paramètres afin de guider le programme. Les fichiers de configuration viennent répondre à ce besoin.
+
+La principale contrainte pour ceux-ci est qu'ils doivent être à la fois concis, c'est-à-dire qu'il y ait le moins d'informations possible à renseigner par l'utilisateur~; mais aussi complets, c'est-à-dire que l'utilisateur puisse donner exactement ce qu'il souhaite.
+
+Enfin, afin de faciliter l'utilisation du programme, un manuel utilisateur a été rédigé (voir annexe B). Il guide l'utilisateur et lui permet de s'orienter au sein du projet.
+
+  \subsection{Journalisation des actions effectuées}
+
+La clarté d'exécution est un critère particulièrement important et attendu. De ce fait, une attention toute particulière à été portée sur ce point. C'est pourquoi les logs de l'application se veulent les plus clairs possibles. Le défi ici est d'être assez précis et concis, tout en restant assez général afin que l'utilisateur final ne se perde pas dans les détails pour autant.
+
+Au sein du code source, cela se traduit par une vérification constante assez fine quant aux retours des fonctions clés de traitement. Ainsi, ces fonctions retournent un paramètre supplémentaire, indiquant à leur fonction appelante la réussite ou l'échec du traitement demandé, le cas échéant. La fonction appelée se sera alors chargée, si nécessaire, de produire une ligne de journalisation détaillant le problème rencontré pour cet appel.
+
+\begin{Code}
+  def log(msg, lvl='info'):
+      """
+      Journalise les evenements de maniere formatee.
+
+      Les messages seront prefixes du niveau de severite.
+      Le LOG_LEVEL precise l'importance moindre a partir de laquelle afficher le message.
+      :param msg: string le message
+      :param lvl: string le niveau
+      """
+
+      def print_it():
+          printerr('[{}] {}'.format(lvl.upper(), msg))
+
+      levels_to_print = SEVERITY_LEVELS[:SEVERITY_LEVELS.index(LOG_LEVEL)+1]
+
+      if lvl in levels_to_print:
+          print_it()
+
+      # niveau special non defini par defaut
+      # on affiche donc le message independemment du LOG_LEVEL
+      if lvl not in SEVERITY_LEVELS:
+          print_it()
+\end{Code}
+
+La principale fonction de journalisation, appelée à de nombreuses reprises au sein de l'exécution est détaillée ci-contre. On peut notamment remarquer la présence d'une configuration du niveau de gravité minimum à partir duquel afficher un log. Cela permet, par exemple, si l'utilisateur effectue un grand nombre d'imports simultanément, d'être en mesure de ne visualiser que les entrées de journalisation d'erreur et de mise en garde, s'il le souhaite.
+
+  \subsection{Récupération des données}
+
+Le récupération des données s'effectue différemment en fonction des \bsc{URI}. En effet, le traitement se distingue entre les ressources locales (\bsc{URI} en \code{file:///}) et les ressources web distantes (\bsc{URI} en \code{http}). Pour les données accessibles en local, elles sont simplement copiées dans l'arborescence de travail du programme. Les ressources distantes sont téléchargées via des appels aux fonctions d'\code{urllib}.
+
+\begin{Code}
+  with open(save_as, 'wb') as output_file:
+      response = get(uri, verify=False)
+      output_file.write(response.content)
+\end{Code}
+
+Afin de pouvoir se déplacer manuellement dans les données téléchargées à des fins de consultation, copie ou partage, il est nécessaire que ces données soient correctement agencées. L'arborescence est tout d'abord découpée selon chaque site de téléchargement. Les données copiées sont dans un dossier "\code{copied}" dans ce même répertoire. Puis, chaque dossier de site se découpe en nom de données téléchargées. Il y en a un par archive distincte.
+
+En procédant de la sorte, il est facilement possible de savoir si une donnée a d'ores-et-déjà été téléchargée. En effet, le chemin vers l'emplacement attribué à cette donnée fait office de clé. Il suffit alors de constater la présence ou l'absence de l'archive en question.
+
+  \subsection{Décompression des archives}
+
+Les données mises à disposition par les différentes institutions sont fournies comme archives. On trouve surtout des \code{.zip} et \code{.7z}. La bibliothèque \code{patool} permet conserver un traitement standard pour tous les formats au niveau du code source de l'application. Cette bibliothèque se charge en réalité d'appeler l'exécutable sur le système approprié pour décompresser l'archive, après détection du type \bsc{\gls{MIME}}* de celle-ci.
+
+En se basant sur \code{patool}, j'ai donc défini une fonction de test pour déterminer si un fichier est constitutif ou non d'une archive.
+
+\begin{Code}
+  def is_archive(params):
+      """
+      Determine si le fichier passe en parametre est une archive.
+
+      :param params: les parametres
+      :return: True si c'est une archive, False sinon
+      """
+      try:
+          test_archive(params['path'], verbosity=-1, interactive=False)
+      except Exception:
+          return False
+      return True
+\end{Code}
+
+Cette fonction sert à sélectionner les archives lors de la recherche des archives à décompresser~:
+
+\begin{Code}
+    archives_to_extract = search_with_criteria(DOWNLOAD_ROOT, is_archive, search_depth=2)
+\end{Code}
+
+La bibliothèque \code{patool} permet ensuite d'extraire chaque archive en fournissant uniquement son chemin, comme suit.
+
+\begin{Code}
+  extract_archive(archive_path, verbosity=-1, outdir=archive_dir, interactive=False)
+\end{Code}
+
+  \subsection{Recherche d'une donnée}
+
+Une problématique s'est posée lors de la recherche des données au sein des archives décompressées ayant été téléchargées. En effet, il s'est avéré que certains organismes regroupent plusieurs données au sein d'une même archive ressource. Il est donc fréquent d'observer plusieurs données au sein d'une même archive. Ces données peuvent être un fichier unique ou un ensemble de fichiers.
+
+Deux cas de figures se présentent~:
+\begin{itemize}
+  \item L'utilisateur a renseigné le nom de la donnée de manière précise, c'est-à-dire le nom du ou des fichier(s).
+  \item L'utilisateur a omis le nom de la donnée.
+\end{itemize}
+
+Dans le premier cas, il suffit d'utiliser ce nom au sein de la recherche. Ci-contre le code source de la fonction utilitaire de recherche récursive avec critère. Le \code{validator} qui sera passé ici est une fonction renvoyant un booléen. Ce booléen vaut \code{True} si le fichier correspondant au chemin absolu passé en paramètre correspond à un fichier qui nous intéresse, \code{False}.
+
+\begin{Code}
+  # Prototype de la fonction de recherche recursive avec criteres.
+  def search_with_criteria(path_to_search_in, validator, validator_params=None, search_depth=0):
+  """Recherche les fichiers satisfaisant un ensemble de critères au sein du dossier specifie."""
+\end{Code}
+
+La distinction avec le second cas s'exprime donc au niveau de la fonction de validation passée en paramètre. Si le nom précis de la donnée n'est pas renseigné, l'algorithme de recherche ne se basera que sur les extensions de fichiers afin de trouver des groupes intéressants de fichiers. Si plusieurs groupes sont trouvés, alors le traitement pour cette donnée s'arrête là. En effet, le programme avertit l'utilisateur que le nom de la donnée doit impérativement être renseigné pour cet import. Néanmoins, il n'y aura souvent qu'une seule et unique donnée potentielle au sein d'une archive. C'est pourquoi cette souplesse qui permet de ne pas renseigner le nom de la donnée est essentielle puisqu'elle épargne à l'utilisateur cette action.
+
+  \subsection{Modification de leur structure}
+
+Les fichiers sont ouverts à l'aide de la bibliothèque \code{fiona}. Cette bibliothèque se concentre sur la lecture et l'écriture de donnée. Ce n'est pas elle qui est à même de gérer des transformations géographiques, par exemple. Cette bibliothèque permet notamment de lire un bon nombre de fichiers qui contiennent des données géoréférencées et de construire une structure python, en l'occurrence un dictionnaire, qui les représente en mémoire.
+
+De plus, \code{fiona} permet de travailler avec les données en flux, ce qui est essentiel au vu de l'importante volumétrie des données que l'on traite ici. En effet, il est possible, en fonction du système sur lequel sera lancé l'application, que certains fichiers de données à importer soient trop conséquent pour être chargé en mémoire vive (\bsc{\gls{RAM}}*). De ce fait, le traitement en flux revête toute son importance.
+
+L'utilisateur peut préciser, au sein du fichier de configuration des imports, un certain nombre de modifications structurelles. Il peut aisément spécifier les actions suivantes~:
+
+\begin{description}
+  \item[renommage~:] modifier le nom d'un attribut~;
+  \item[filtrage~:] ne conserver que les attributs qu'il spécifie~;
+  \item[suppression~:] supprimer des attributs qu'il spécifie~;
+  \item[choix] déterminer le comportement du logiciel pour cette donnée, le "mode".
+\end{description}
+
+Le mode aura pour valeur \code{"modified"} ou \code{"keep\_only"}. Dans le premier cas, les attributs non spécifiés par l'utilisateur seront conservés en l'état, sans aucune action de la part du logiciel. Dans le second cas, les attributs non spécifiés seront jetés.
+
+  \subsection{Reprojection de jeux de données}
+
+Il arrive que des données que l'on souhaite ajouter à une table existante en base soient projetées dans un système de référence spatiale différent. Chacun de ces systèmes est associé a un identifiant unique, son \bsc{\gls{SRID}}*. Le \bsc{SRID} source ainsi que le \bsc{SRID} de destination de la table doivent tous les deux à renseigner dans le fichier de configuration des imports.
+
+Néanmoins, si les données le permettent (présence d'un fichier \code{.prj}), le logiciel doit pouvoir détecter la projection source. De même, il doit détecter le \bsc{SRID} de destination via une introspection de la table désirée pour l'import.
+
+Une fois les \bsc{SRID} source et destination connus, la bibliothèque \code{pyproj} pourra par exemple être utilisée.
+
+  \subsection{Importation en base}
+
+À l'aide la bibliothèque \code{psycopg}, il est très simple de se connecter au \bsc{SGBD} PostgreSQL~:
+
+\begin{Code}
+  connect(host=DB_HOST, port=DB_PORT, dbname=DB_NAME, user=DB_USER_NAME, password=DB_USER_PASSWORD)
+\end{Code}
+
+La fonction \code{connect()} renvoie une connexion vers la base de données. Pour effectuer une requête, on peut procéder comme suit~:
+
+\begin{Code}
+  cur = conn.cursor()
+  cur.execute(query)
+  conn.commit()
+\end{Code}
+
+Par ailleurs, les données sont traitées en flux. À partir de chaque entrée d'un fichier d'entrée, c'est-à-dire pour chaque futur tuple en base de données, le logiciel construit dynamiquement une requête d'insertion à envoyer en base de données, puis l'envoie.
+
+\begin{Code}
+  def build_insert_query(properties, params):
+      """Construit une requete d'insertion dans une table a partir d'une feature donnee."""
+
+      # valeurs intermediaires
+      columns = list(properties.keys())
+      wkt = shape(properties['geometry'])
+      srid = params['srid_source']
+      geometry_field = "ST_GeomFromText('{}', {})".format(wkt, srid)
+
+      # champs pour requetes
+      table_name = '"{}"."{}"'.format(params['schema'], params['table'])
+      fields_list = '({})'.format(', '.join(columns))
+      values = '({})'.format(', '.join([geometry_field if attr == GEOMETRY_NAME else "'{}'".format(p.replace("'", "''")) if isinstance(p, str) else str(p) for attr, p in properties.items()]))
+
+      query = 'INSERT INTO {} {} VALUES {};'.format(table_name, fields_list, values)
+
+      return query
+\end{Code}
+
+Cette construction des requêtes d'insertion, dont la fonction est détaillée ci-contre, permet de mettre en évidence le traitement spécifique réalisé pour l'aspect géoréférencé des données. En effet, la colonne nommée \code{geometry} des données d'entrées --- ici, une clé au sein du dictionnaire délivré par \code{fiona} --- n'est pas de la forme attendue par l'extension PostGIS, côté base de données. En effet, la représentation de l'attribut \code{geometry} dans PostGIS diffère de celle qui est attendue. Cependant, on ne peut l'obtenir directement.
+
+Le Well-Known Text (\bsc{\gls{WKT}}*) est un format standard qui sert d'intermédiaire. En effet, du côté base de données, l'appel à \code{ST\_GeomFromText} permet de transformer les données afin de pouvoir les stocker dans la colonne \code{geometry}, à partir du well know text. Ainsi, côté Python, il faut obtenir le \bsc{WKT}. Comme on peut le voir ici, c'est à l'aide de la fonction \bsc{shape()} de la bibliothèque \bsc{shapely} que le logiciel obtient le \bsc{WKT} à partir des données d'entrée.
+
+  \subsection{Comportement intelligent}
+
+Un comportement dit "intelligent" est attendu. Lors de la recherche d'une donnée, le nom du fichier souhaité pouvait être omis par l'utilisateur afin que le programme le détecte de lui-même. C'est un exemple de comportement "intelligent".
+
+De même, le logiciel produit des avertissements. Ceux-ci n'interrompent pas le traitement, mais font état d'un petit problème qui a été rencontré. En effet, il avertit l'utilisateur lorsque les fichiers de configuration comportent des fautes mineures de formatage ou de logique au sein du fichier de configuration des imports~:
+
+\begin{itemize}
+  \item l'utilisateur a renseigné une clause "drop" alors que le mode est "keep\_only", c'est un non-sens qui est signalé car il est inutile de renseigner un attribut à retirer qui sera de toute manière laissé de côté~;
+  \item l'utilisateur a renseigné un nom peu approprié pour un dossier de stockage d'une donnée à récupérer~; un nom corrigé est alors suggéré.
+\end{itemize}
+
+Enfin, il est inconfortable de retirer du fichier de configuration les données ayant d'ores-et-déjà été traitées. De ce fait, le programme ne téléchargera pas à nouveau une donnée ayant déjà été téléchargée. Il en va de même au sujet des imports en base de données.

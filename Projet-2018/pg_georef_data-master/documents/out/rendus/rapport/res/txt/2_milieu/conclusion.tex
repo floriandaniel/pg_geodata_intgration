@@ -1,0 +1,59 @@
+\addcontentsline{toc}{chapter}{Conclusion}
+
+\section*{État de l'avancement du projet}
+  \addcontentsline{toc}{section}{État de l'avancement du projet}
+
+Le logiciel réalisé permet de répondre au besoin général initialement énoncé, à savoir créer, facilement et à partir de zéro, une base de données géographiques. Des scripts permettent d'effectuer automatiquement les installations et configurations adéquates. Finalement, le programme principal permet de :
+
+\begin{itemize}
+  \item récupérer les données à traiter (téléchargement)~;
+  \item décompresser les archives récupérées~;
+  \item explorer ces données afin d'en trouver la donnée intéressante~;
+  \item parser ces données (supporté pour un nombre limité de formats)~;
+  \item y appliquer les pré-traitements nécessaires~;
+  \item les importer en base.
+\end{itemize}
+
+L'ensemble des fonctionnalités implémentées ont été testées manuellement. J'ai cherché à éprouver les cas spécifiques. Ainsi j'ai notamment vérifié le comportement de l'application pour différentes configuration d'import.
+
+\section*{Limites de l'outil principal développé}
+  \addcontentsline{toc}{section}{Limites de l'outil principal développé}
+
+Il est important de mettre en avant que l'application en elle-même n'est pas limitée par la taille des données. En effet, l'ensemble des traitements s'effectuant en flux, la capacité du système en mémoire vive ne pose pas de problème.
+
+Seule la capacité de stockage en mémoire morte des données d'entrée peut constituer un facteur limitant. par ailleurs la qualité de la connexion internet influe beaucoup sur la durée de rapatriement des données, puisque la majorité des ressources sont des ressources distantes. Ainsi la vitesse de traitement est environ linéaire par rapport au volume des données d'entrée.
+
+En ce qui concerne la structure générale du projet, le choix d'avoir développé les différents modules en les rendant indépendants les uns des autres peut être critiqué sur le long terme. Certes, chacun constitue une brique réutilisable à part. Cependant, cette conception trouve ses limites car chaque module doit aller retrouver et parser les fichiers de configuration, tour à tour. Un changement de structure au niveau de ces configuration serait difficile à opérer. Cela explique le fait d'avoir fixé au plus tôt la structure de ces fichiers.
+
+Ainsi, il aurait été possible de s'appuyer sur le paradigme de la programmation orientée objet afin de créer une classe représentant une donnée à importer. Cette dernière aurait par exemple un attribut représentant son stade actuel ; c'est-à-dire récupérée, extraite ou importée. En procédant de la sorte, un gain de modularité supplémentaire serait obtenu.
+
+\section*{Perspectives d'amélioration}
+  \addcontentsline{toc}{section}{Perspectives d'amélioration}
+
+Les scripts shell développés respectent les bonnes pratiques de développement, mais ne se plient pas pour autant aux normes \bsc{\gls{POSIX}}*. Respecter ces contraintes au sein de ces scripts augmenterait leur portabilité.
+
+Le développement d'une interface graphique pourrait être réalisé. Celle-ci permettrait par exemple de créer plus simplement les fichiers de configuration, de façon totalement transparente à l'utilisateur. Ainsi, le programme gagnerait énormément en interactivité et en sûreté. En effet le fichier de configuration généré serait ainsi systématiquement correct sur la question du formatage. De même, l'utilisateur pourrait avoir la possibilité d'importer en filtrant via des critères, ou de n'effectuer que l'étape de téléchargement pour une donnée par exemple. Une telle surcouche demanderait un développement assez conséquent car on peut alors imaginer beaucoup de nouvelles fonctionnalités comme ces quelques exemples.
+
+Pour ce qui est de l'outil principal, la gestion d'un plus grand nombre de formats est un point à travailler. En effet, la diversité des sources de données, et, de façon analogique, des données qu'elles mettent à disposition est assez importante. Néanmoins il faut garder à l'esprit que la souplesse de l'application développée permet de distinguer aisément les traitement associés aux différents cas.
+
+ \section*{Expérience acquise}
+   \addcontentsline{toc}{section}{Expérience acquise}
+
+Premièrement, j'ai constaté l'importance d'accorder une attention toute particulière aux étapes en amont de l'implémentation. Ainsi, j'ai progressé au niveau du recueil du besoin et de sa définition, mais également sur les activités de conception. En effet, au cours de l'élaboration de la solution, la majorité des problèmes potentiels ont été soulevés tôt. Cela a permis d'orienter la conception de l'application, notamment au niveau de son découpage. De cette manière, l'application est suffisamment modularisée pour gérer tous les cas : l'ensemble des traitements communs à plusieurs scénarios d'exécution sont factorisés.
+
+De plus, ce stage a été l'occasion d'utiliser mes compétences de scripting shell en bash lors de la réalisation des scripts d'installation et de configuration.
+
+Par ailleurs, je suis monté en compétence sur le langage Python. En particulier, j'ai été amené à manipuler plusieurs bibliothèques, énoncées ci-après. Chacune est accompagnée d'un bref descriptif de l'utilisation qui en est faite au sein du projet.
+
+\begin{description}
+  \item[patool~:] décompression en fonction du type \bsc{MIME}~;
+  \item[xlrd~:] parsage du fichier excel précisant les imports~;
+  \item[fiona~:] parsage des données à traiter~;
+  \item[shapely~:] modifications sur la colonne geometry~;
+  \item[psycopg2~:] connexion à la base de données.
+\end{description}
+
+En ce qui concerne les outils, j'ai appris à utiliser conda afin de gérer efficacement des environnements virtuels. J'ai aussi progressé sur le langage de présentation LaTeX lors de la rédaction du cahier des charges et de ce rapport.
+
+\clearpage
+\pagenumbering{gobble}

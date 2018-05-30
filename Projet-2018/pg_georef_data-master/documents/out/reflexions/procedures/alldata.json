@@ -1,0 +1,505 @@
+{
+    "res": [
+        {
+            "params": {
+                "srid_source": 3035,
+                "version": "RFL_dec2010_TH_jan2011",
+                "table": "200m-carreaux-metropole",
+                "year": 2010,
+                "schema": "donnees_carroyees",
+                "srid_destination": 2154,
+                "shortname": "200m-carreaux-metropole",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2520034/200m-carreaux-metropole.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": 3035,
+                "version": "RFL_dec2010_TH_jan2011",
+                "table": "200m-rectangles-metropole",
+                "year": 2010,
+                "schema": "donnees_carroyees",
+                "srid_destination": 2154,
+                "shortname": "200m-rectangles-metropole",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2520034/200m-rectangles-metropole.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": 3035,
+                "version": "RFL_dec2010_TH_jan2011",
+                "table": "data_carroy_1000m",
+                "year": 2010,
+                "schema": "donnees_carroyees",
+                "srid_destination": 2154,
+                "shortname": "data_carroy_1000m",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/1405815/ECP1KM_09_MET.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "fd_logemt_2013",
+                "table": "logemt_2013",
+                "year": 2013,
+                "schema": "logement",
+                "srid_destination": "",
+                "shortname": "Logements_ordinaires",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2409491/rp2013_logemt_dbase.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "fd_logemtza_2013",
+                "table": "logemtza_2013",
+                "year": 2013,
+                "schema": "logement",
+                "srid_destination": "",
+                "shortname": "Logements_ordinaires_zonea",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2409491/rp2013_logemtza_dbase.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "fd_logemtzb_2013",
+                "table": "logemtzb_2013",
+                "year": 2013,
+                "schema": "logement",
+                "srid_destination": "",
+                "shortname": "Logements_ordinaires_zoneb",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2409491/rp2013_logemtzb_dbase.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "fd_logemtzc_2013",
+                "table": "logemtzc_2013",
+                "year": 2013,
+                "schema": "logement",
+                "srid_destination": "",
+                "shortname": "Logements_ordinaires_zonec",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2409491/rp2013_logemtzc_dbase.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "fd_logemtzd_2013",
+                "table": "logemtzd_2013",
+                "year": 2013,
+                "schema": "logement",
+                "srid_destination": "",
+                "shortname": "Logements_ordinaires_zoned",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2409491/rp2013_logemtzd_dbase.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "fd_logemtze_2013",
+                "table": "logemtze_2013",
+                "year": 2013,
+                "schema": "logement",
+                "srid_destination": "",
+                "shortname": "Logements_ordinaires_zonee",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2409491/rp2013_logemtze_dbase.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "indcvi_2013",
+                "table": "indcvi_2013",
+                "year": 2013,
+                "schema": "mobilité",
+                "srid_destination": "",
+                "shortname": "inidiv_canton_ville",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2409376/rp2013_indcvi_dbase.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "indcviza_2013",
+                "table": "indcviza_2013",
+                "year": 2013,
+                "schema": "population",
+                "srid_destination": "",
+                "shortname": "inidiv_canton_ville_zonea",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2409376/rp2013_indcviza_dbase.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "indcvizb_2013",
+                "table": "indcvizb_2013",
+                "year": 2013,
+                "schema": "population",
+                "srid_destination": "",
+                "shortname": "inidiv_canton_ville_zoneb",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2409376/rp2013_indcvizb_dbase.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "indcvizc_2013",
+                "table": "indcvizc_2013",
+                "year": 2013,
+                "schema": "population",
+                "srid_destination": "",
+                "shortname": "inidiv_canton_ville_zonec",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2409376/rp2013_indcvizc_dbase.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "indcvizd_2013",
+                "table": "indcvizd_2013",
+                "year": 2013,
+                "schema": "population",
+                "srid_destination": "",
+                "shortname": "inidiv_canton_ville_zoned",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2409376/rp2013_indcvizd_dbase.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "indcvize_2013",
+                "table": "indcvize_2013",
+                "year": 2013,
+                "schema": "population",
+                "srid_destination": "",
+                "shortname": "inidiv_canton_ville_zonee",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2409376/rp2013_indcvize_dbase.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "mobzelt_2013",
+                "table": "mobzelt_2013",
+                "year": 2013,
+                "schema": "mobilité",
+                "srid_destination": "",
+                "shortname": "activite_pro_indiv_ze2013",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2409516/rp2013_mobzelt_dbase.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "migcom_2013",
+                "table": "migcom_2013",
+                "year": 2013,
+                "schema": "mobilité",
+                "srid_destination": "",
+                "shortname": "migrations_residentielles",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2409519/rp2013_migcom_dbase.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "population_2013",
+                "table": "population_2013",
+                "year": 2013,
+                "schema": "population",
+                "srid_destination": "",
+                "shortname": "population_2013",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2386737/base-ic-evol-struct-pop-2013.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "filo_2013",
+                "table": "revenu_pauvrete_menage_2013_com",
+                "year": 2013,
+                "schema": "revenus_fiscalite",
+                "srid_destination": "",
+                "shortname": "revenu_pauvrete_menage_2013_com",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2388572/filo-revenu-pauvrete-menage-2013.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "filo_2013",
+                "table": "revenu_pauvrete_menage_2013_epci",
+                "year": 2013,
+                "schema": "revenus_fiscalite",
+                "srid_destination": "",
+                "shortname": "revenu_pauvrete_menage_2013_epci",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2388572/filo-revenu-pauvrete-menage-2013.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "filo_2013",
+                "table": "revenu_pauvrete_menage_2013_arr",
+                "year": 2013,
+                "schema": "revenus_fiscalite",
+                "srid_destination": "",
+                "shortname": "revenu_pauvrete_menage_2013_arr",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2388572/filo-revenu-pauvrete-menage-2013.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "filo_2013",
+                "table": "revenu_pauvrete_menage_2013_dep",
+                "year": 2013,
+                "schema": "revenus_fiscalite",
+                "srid_destination": "",
+                "shortname": "revenu_pauvrete_menage_2013_dep",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2388572/filo-revenu-pauvrete-menage-2013.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "filo_2013",
+                "table": "revenu_pauvrete_menage_2013_reg",
+                "year": 2013,
+                "schema": "revenus_fiscalite",
+                "srid_destination": "",
+                "shortname": "revenu_pauvrete_menage_2013_reg",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2388572/filo-revenu-pauvrete-menage-2013.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "filo_2013",
+                "table": "revenu_pauvrete_menage_2013_reg2016",
+                "year": 2013,
+                "schema": "revenus_fiscalite",
+                "srid_destination": "",
+                "shortname": "revenu_pauvrete_menage_2013_reg2016",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2388572/filo-revenu-pauvrete-menage-2013.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "filo_2013",
+                "table": "revenu_pauvrete_menage_2013_metro",
+                "year": 2013,
+                "schema": "revenus_fiscalite",
+                "srid_destination": "",
+                "shortname": "revenu_pauvrete_menage_2013_metro",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2388572/filo-revenu-pauvrete-menage-2013.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "filo_2013",
+                "table": "revenu_pauvrete_menage_au2010",
+                "year": 2013,
+                "schema": "revenus_fiscalite",
+                "srid_destination": "",
+                "shortname": "revenu_pauvrete_menage_au2010",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2388572/filo-revenu-pauvrete-menage-2013.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "filo_2013",
+                "table": "revenu_pauvrete_menage_uu2010",
+                "year": 2013,
+                "schema": "revenus_fiscalite",
+                "srid_destination": "",
+                "shortname": "revenu_pauvrete_menage_uu2010",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2388572/filo-revenu-pauvrete-menage-2013.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "filo_2013",
+                "table": "revenu_pauvrete_menage_ze2010",
+                "year": 2013,
+                "schema": "revenus_fiscalite",
+                "srid_destination": "",
+                "shortname": "revenu_pauvrete_menage_ze2010",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2388572/filo-revenu-pauvrete-menage-2013.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "equip_2015",
+                "table": "equi_commerce_etc_xy",
+                "year": 2015,
+                "schema": "equipement",
+                "srid_destination": "",
+                "shortname": "equi_commerce_etc",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2387803/BPE15_ensemble_xy_dbase.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "equip_2015",
+                "table": "equi_enseignement_xy",
+                "year": 2015,
+                "schema": "equipement",
+                "srid_destination": "",
+                "shortname": "equi_enseignement",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2410761/BPE15_enseignement_xy_dbase.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "equip_2015",
+                "table": "equi_sport_loisir_xy",
+                "year": 2015,
+                "schema": "equipement",
+                "srid_destination": "",
+                "shortname": "equi_enseignement",
+                "uri": "https://www.insee.fr/fr/statistiques/fichier/2410827/BPE15_sport_Loisir_xy_dbase.zip"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "elec_2014",
+                "table": "livraison_electricite",
+                "year": 2014,
+                "schema": "energie",
+                "srid_destination": "",
+                "shortname": "livraison_electricite_2014",
+                "uri": "http://www.statistiques.developpement-durable.gouv.fr/fileadmin/documents/Themes/Energies_et_climat/Les_differentes_energies/Electricite/enquete_livraison/2014/livraison-electricite-2014-communes-b.xls"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "gaz_2011",
+                "table": "livraison_gaz",
+                "year": 2011,
+                "schema": "energie",
+                "srid_destination": "",
+                "shortname": "livraison_gaz_2011",
+                "uri": "http://www.statistiques.developpement-durable.gouv.fr/fileadmin/documents/Themes/Energies_et_climat/Les_differentes_energies/Gaz_naturel/enquete_livraison/gaz-livraison-2011-com.xls"
+            },
+            "import_mode": "controlee_nouvelle_table"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "elec_2013",
+                "table": "livraison_electricite",
+                "year": 2013,
+                "schema": "energie",
+                "shortname": "livraison_electricite_2013",
+                "uri": "http://www.statistiques.developpement-durable.gouv.fr/fileadmin/documents/Themes/Energies_et_climat/Les_differentes_energies/Electricite/enquete_livraison/2013/livraison-electricite-2013-communes-b.xls"
+            },
+            "import_mode": "controlee_table_existante"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "elec_2012",
+                "table": "livraison_electricite",
+                "year": 2012,
+                "schema": "energie",
+                "shortname": "livraison_electricite_2012",
+                "uri": "http://www.statistiques.developpement-durable.gouv.fr/fileadmin/documents/Themes/Energies_et_climat/Les_differentes_energies/Electricite/enquete_livraison/livraison-electricite-2012-communes.xls"
+            },
+            "import_mode": "controlee_table_existante"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "elec_2011",
+                "table": "livraison_electricite",
+                "year": 2011,
+                "schema": "energie",
+                "shortname": "livraison_electricite_2011",
+                "uri": "http://www.statistiques.developpement-durable.gouv.fr/fileadmin/documents/Themes/Energies_et_climat/Les_differentes_energies/Electricite/enquete_livraison/elec-livraison-2011-com.xls"
+            },
+            "import_mode": "controlee_table_existante"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "gaz_2013",
+                "table": "livraison_gaz",
+                "year": 2013,
+                "schema": "energie",
+                "shortname": "livraison_gaz_2013",
+                "uri": "http://www.statistiques.developpement-durable.gouv.fr/fileadmin/documents/Themes/Energies_et_climat/Les_differentes_energies/Gaz_naturel/enquete_livraison/2013/livraison-gaz-2013-communes.xls"
+            },
+            "import_mode": "controlee_table_existante"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "gaz_2012",
+                "table": "livraison_gaz",
+                "year": 2012,
+                "schema": "energie",
+                "shortname": "livraison_gaz_2012",
+                "uri": "http://www.statistiques.developpement-durable.gouv.fr/fileadmin/documents/Themes/Energies_et_climat/Les_differentes_energies/Gaz_naturel/enquete_livraison/gaz-livraison-2012-communes.xls"
+            },
+            "import_mode": "controlee_table_existante"
+        },
+        {
+            "params": {
+                "srid_source": "",
+                "version": "gaz_2014",
+                "table": "livraison_gaz",
+                "year": 2014,
+                "schema": "energie",
+                "shortname": "livraison_gaz_2014",
+                "uri": "http://www.statistiques.developpement-durable.gouv.fr/fileadmin/documents/Themes/Energies_et_climat/Les_differentes_energies/Gaz_naturel/enquete_livraison/2014/livraison-gaz-2014-communes.xls"
+            },
+            "import_mode": "controlee_table_existante"
+        }
+    ]
+}

@@ -1,0 +1,113 @@
+{
+    "documentation": {
+        "remarques": {
+            "outils": [
+                "il est fortement conseillé d'utiliser un éditeur permettant de \"wrapper\" par node",
+                "ainsi il est beaucoup plus aisé de parcourir et d'éditer le fichier en ne conservant visuellement que le strict nécessaire",
+                "\"atom\" et \"notepad++\" possèdent cette fonctionnalité",
+                "ce n'est pas le cas de \"sublime_text\" ni de \"gedit\", pas sans plugin en tout cas"
+            ],
+            "utilisation": [
+                "- copier le patron adapté au type d'import désiré à partir de la documentation",
+                "- le coller au sein la node \"res\" se situant au niveau le plus haut",
+                "- remplir de façon adéquate les différents champs"
+              ],
+            "enrichissement": [
+                "il est possible d'ajouter librement des nodes",
+                "attention cependant à conserver rigoureusement l'arbre actuel en tant que squelette, puisque la structure initiale est nécessaire au parsage",
+                "exemples",
+                "ajout d'une node \"description\" pour une ou plusieurs données, au même niveau qu'\"import_mode\" et \"params\""
+              ]
+        },
+        "variables": {
+            "import_mode": [
+                "les \"params\" à renseigner varient en fonction du type d'import choisi"
+            ],
+            "shortname": [
+                "définit le nom de dossier sous lequel stocker la donnée",
+                "il est préférable qu'il soit formaté de manière à matcher la regex suivante",
+                "^([a-zA-Z]+_?)*[a-zA-Z]+$",
+                "cela correspond à une succession de mots clés, sans accents, séparés d'un underscore",
+                "exemples",
+                "repartition_donnee_exemple",
+                "batiments"
+            ],
+            "data_name": [
+                "définit le nom atomique de la donnée à récupérer",
+                "",
+                "une même archive peut contenir plusieurs données qualifiables d'atomiques",
+                "un objet spécifiant l'import dans \"res\" doit donc être créé pour chaque donnée atomique (= \"data_name\")",
+                "les différentes données atomiques contenues dans une même donnée (même \"uri\", même archive) gagnent à renseigner le même \"shortname\"",
+                "en effet l'archive n'est pas (re)téléchargée indépendemment pour chaque donnée atomique si le shortname est identique",
+                "",
+                "il est possible de ne pas spécifier ce paramètre sous certaines conditions",
+                "(la node est absente ou a pour valeur la chaîne vide)",
+                "si l'utilisateur sait que la donnée ne contient qu'une seule et unique donnée atomique,",
+                "il peut alors faire le choix de ne pas spécifier le nom de la donnée atomique, qui sera détecté automatiquement",
+                "si ce paramètre est absent mais que plusieurs données atomiques sont présentes, une exception sera levée"
+            ],
+            "uri": [
+                "l'uri pointe vers une ressource locale ou distante",
+                "exemples",
+                "file:///media/user/periph_externe/archive_ou_repertoire",
+                "https://www.insee.fr/fr/foobar/archive_a_telecharger"
+            ],
+            "new_fields": [
+                "nouveaux champs à créer (hors année et version)",
+                "si aucun nouveau champ n'est à créer, cette node peut valoir la chaîne vide être simplement omise"
+            ],
+            "mode": [
+                "définit le mode opératoire à suivre",
+                "peut prendre les valeurs suivantes",
+                "",
+                "keep_only    les colonnes modifiées sont renseignées dans bindings, les autres ne sont pas retenues",
+                "modified     les colonnes modifiées sont renseignées dans bindings, les autres sont conservées en l'état"
+            ]
+        },
+        "patterns": [
+            {
+                "import_mode": "controlee_nouvelle_table",
+                "params": {
+                    "shortname": "",
+                    "data_name": "",
+                    "uri": "",
+                    "schema": "",
+                    "table": "",
+                    "year": 2000,
+                    "version": "",
+                    "srid_source": 3819,
+                    "srid_destination": 3821,
+                    "bindings": [
+                        {"from": "", "type": "", "to": ""},
+                        {"from": "", "type": "", "to": ""}
+                    ],
+                    "mode":""
+                }
+            },
+            {
+                "import_mode": "controlee_table_existante",
+                "params": {
+                    "shortname": "",
+                    "data_name": "",
+                    "uri": "",
+                    "schema": "",
+                    "table": "",
+                    "year": 2000,
+                    "version": "",
+                    "srid_source": 3819,
+                    "new_fields": [
+                        {"name": "", "type": ""},
+                        {"name": "", "type": ""}
+                    ],
+                    "bindings": [
+                        {"from": "", "type": "", "to": ""},
+                        {"from": "", "type": "", "to": ""}
+                    ]
+                }
+            }
+        ]
+    },
+      "res": [
+
+      ]
+}

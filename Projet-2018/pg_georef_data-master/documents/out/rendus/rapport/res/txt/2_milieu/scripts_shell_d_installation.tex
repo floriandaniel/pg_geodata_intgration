@@ -1,0 +1,87 @@
+\section{Objectif}
+
+Avant la phase de traitement des données  vient celle de la préparation de l'infrastructure. La création de la plateforme de données géographiques se traduit par l'installation d'une base de données sur un serveur distant. Dans l'optique d'automatiser ces étapes préparatoires, plusieurs scripts ont été réalisés.
+
+Par ailleurs, si les capacités du serveur sont adaptées à exécuter l'application Python afin de rapatrier les données, il serait néanmoins possible d'exécuter le programme sur une machine client. Cela motive le choix de séparer le script de préparation de la base de données, du script de préparation de l'environnement d'exécution. Ainsi, on peut les lancer indépendamment : le premier sur le serveur de données et le second sur la machine où le code Python s'exécutera. La création de ces deux scripts répond donc à la problématique suivante. Comment effectuer facilement l'ensemble des installations nécessaires, de manière automatisée ?
+
+Enfin, un dernier script, qui n'est pas à destination de l'utilisateur final, à été réalisé. Il permet de générer à nouveau l'environnement virtuel conda.
+
+\section{Détail des différents scripts}
+
+  \subsection{Installation et configuration de PostgreSQL}
+
+Ce script, développé en bash, a pour rôle d'installer et de configurer correctement PostgreSQL. C'est le premier script à lancer lors d'une installation à partir de zéro. Il se charge notamment :
+
+\begin{itemize}
+  \item de définir les modes d'authentification~;
+  \item d'autoriser les connexions à distance~;
+  \item d'ajouter la journalisation des connexions et déconnexions~;
+  \item d'ajouter le support de l'\bsc{\gls{UTF-8}}* par défaut~;
+  \item de créer les extensions~;
+  \item de créer deux rôles (lecture et écriture)~;
+  \item d'assigner un mot de passe à l'utilisateur "postgres"~;
+  \item de créer la base de données, vide.
+\end{itemize}
+
+En ce qui concerne les installations, ce sont de simples appels à la commande \code{apt-get}. L'ajout des rôles et du mot de passe pour l'utilisateur postgres, la création de la base et des extensions ainsi que le support de l'\bsc{UTF-8} est assez simple. Ce sont des requêtes \bsc{SQL} soumises à la base à l'aide du client \code{psql}.
+
+En revanche, la configuration des méthodes d'authentification, l'autorisation des connexions à distance, ainsi que la configuration de la journalisation s'effectuent moins facilement. En effet, il est nécessaire de modifier deux fichiers de configuration dans le dossier \code{/etc/postgresql/9.6/main}~:
+
+\begin{description}
+  \item[\code{postgresql.conf}~:] paramètres généraux
+  \item[\code{pg\_hba.conf}~:] règles d'authentification
+\end{description}
+
+Heureusement, de nombreuses commandes bash existent afin de traiter des données textuelles. Ainsi, l'utilisation de \code{sed} combinée aux expressions régulières (\code{gls{regex}}*) permet d'éditer comme souhaité ces deux fichiers de configuration.
+
+  \subsection{Préparation de l'environnement d'exécution}
+
+Ce script, développé en bash, a pour rôle de préparer l'environnement dans lesquels l'applicatif Python s'exécutera. C'est le second script à lancer lors d'une installation à partir de zéro. Il se charge notamment~:
+
+\begin{itemize}
+  \item de changer les permissions sur la racine de travail qui va être utilisée par le code Python~;
+  \item d'installer le paquet \code{p7zip}~;
+  \item d'installer miniconda~;
+  \item d'importer puis d'activer l'environnement conda.
+\end{itemize}
+
+Afin d'éviter tout incident lors du lancement de l'application Python, ce script vient, en amont, effectuer les ajustements nécessaires. En effet, par défaut, le programme va travailler dans \code{/srv}, qui est un emplacement approprié pour recevoir et stocker des données vouées à être partagées. On spécifie donc des droits permissifs sur ce répertoire.
+
+L'installation du paquet \code{p7zip} permet d'obtenir l'exécutable qui gère le format de compression \code{.7zip}. L'exécutable en question (\code{7zr}) sera appelé indirectement par le programme via la bibliothèque \code{patool}.
+
+\code{Miniconda}, quant à lui, s'installe à partir d'un script qui est téléchargé. Il est ensuite ajouté au path, configuré, puis mis-à-jour. Tout est alors prêt pour la dernière étape, très simple, qui consiste à importer l'environnement virtuel conda. Celui-ci a été généré au préalable et est fourni dans l'arborescence du projet.
+
+De cette manière, une fois ce script exécuté, l'ensemble des installations sont terminées.
+
+  \subsection{Création d'un environnement virtuel conda}
+
+Ce script est à destination des personnes souhaitant étoffer le projet à posteriori. Exécuté sur une machine ayant conda d'ores-et-déjà installé, il recrée et exporte l'environnement virtuel conda.
+
+Voici un exemple élagué qui montre à quoi peut ressembler le fichier \bsc{\gls{YAML}}* de l'environnement conda exporté.
+
+\begin{figure}
+\centering
+  \begin{lstlisting}
+    name: gd
+    channels: !!python/tuple
+    - conda-forge
+    - defaults
+    dependencies:
+    - conda-forge::fiona=1.7.6=np112py35_0
+    - conda-forge::json-c=0.12=0
+    - conda-forge::pcre=8.39=0
+    - conda-forge::pip=9.0.1=py35_0
+    - conda-forge::psycopg2=2.7.1=py35_0
+    - conda-forge::python=3.5.3=3
+    - conda-forge::readline=6.2=0
+    - conda-forge::shapely=1.5.17=np112py35_2
+    - conda-forge::xlrd=1.0.0=py35_1
+    - util-linux=2.21=0
+    - pip:
+      - patool==1.12
+    prefix: /home/taunay/miniconda/envs/gd
+  \end{lstlisting}
+\caption{Environnement virtuel conda exporté (simplifié)}
+\end{figure}
+
+Cela permet de faciliter l'ajout ultérieur d'une bibliothèque. En effet, il suffit d'ajouter le paquet nécessaire au sein du script et de le lancer. De cette manière, l'environnement virtuel conda nouvellement généré comportera la ou les bibliothèques ajoutées.

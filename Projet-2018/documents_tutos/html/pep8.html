@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>pep8</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="la-norme-pep8">La norme PEP8</h1>
+<p><img src="https://www.meccanismocomplesso.org/wp-content/uploads/2016/08/Meccanismo-Complesso-Pep-8-Coding-style-in-Python.jpg" alt="Norme PEP8"></p>
+<p>La norme <strong>PEP8</strong> rassemble un ensemble de règles d’écritures en Python, concernant essentiellement les espaces, les retours chariots ainsi que les noms des variables. Elle constitue une réelle harmonisation des méthodes et des conventions de “codage”.</p>
+<h2 id="utilité">Utilité</h2>
+<p>La communauté Python, grandissant exponentiellement, il semble nécessaire de fixer des “règles”, permettant aux utilisateurs d’adopter la même rédaction du code.<br>
+Dans les forums notamment <a href="https://stackoverflow.com/">StackOverflow</a> et <a href="https://python.developpez.com/">developpez.com</a>, la norme <em>PEP8</em> permet une meilleure lisibilité, ainsi elle produit un plus grand attrait de Python. En effet, il est souvent représenté tel un langage peu esthétique et donc moins accessible pour les <em>néophytes</em>.</p>
+
+<h2 id="des-normes">Des normes</h2>
+<h3 id="les-espaces">Les espaces</h3>
+<p>Les opérateurs doivent être absolument entourés d’espaces.</p>
+<pre><code># Correct
+ma_variable = 'value'
+1 + 2
+
+# Incorrect
+ma_variable='value'
+1+2
+</code></pre>
+<p>Cependant, il existe une exception fréquente : un argument avec une valeur par défaut.</p>
+<pre><code># Correct
+fonct(arg='value')
+</code></pre>
+<h3 id="les-lignes">Les lignes</h3>
+<p>Par convention, une ligne doit se limiter à 79 caractères. Ceci est un héritage des petits écrans.</p>
+<p>Pour une ligne trop longue, on peut donc utiliser l’indentation, le slash <code>/</code> à la fin d’une ligne, …</p>
+<pre><code># Indentation
+foo = la_chose_au_nom_si_long_quelle_ne_tient_pas_sur(
+      une, 
+      carte, 
+      de, 
+      munchkin)
+      
+# Slash      
+queryset = ModelDjangoALaNoix.objects\
+                         .filter(banzai=True)\
+                         .exclude(chawarma=False)
+                        
+# Parenthèses
+from file_info import (file_extension, is_compressed, file_name, 
+							file_count_sheets, path_folder)
+
+# Multiples guillemets
+s = ("Les chaînes Python sont automatiquement"
+ "concaténées par la VM si elles sont "
+ "uniquement séparées par des espaces "
+ "ou sauts de lignes.")
+</code></pre>
+<h3 id="les-noms">Les noms</h3>
+<p>Si deux modules sont importés, ils doivent obligatoirement figuré dans 2 lignes d’importation différentes.</p>
+<pre><code># Correct
+import geopandas
+import xlrd
+
+# Incorrect
+import xlrd, geopandas
+</code></pre>
+<p>Les variables, dans la globalité, sont composées de lettres minuscules <code>abcde..yz</code> et d’underscores <code>_</code>.<br>
+Retour sur ces règles …</p>
+<pre><code># Boucle et indices 
+# --&gt; Minuscule simple
+for x in range(10):
+    print(x)
+
+# Modules, variables, fonctions, ...
+# --&gt; Minuscules et underscores
+une_variable = 10
+def une_fonction():
+
+# Constantes
+MAX_LENGTH = 10
+
+# Classe (Camel Case)
+class JeSuisUneClasse:
+</code></pre>
+<h2 id="mon-code-suit-il-les-conventions-">Mon code suit-il les conventions ?</h2>
+<p>il existe une librairie en Python, permettant de vérifier si un fichier est conventionné dans la norme PEP8 : c’est pep8.<br>
+On l’installe avec la commande suivante.</p>
+<pre><code>Installation
+$ pip install pep8
+
+Utilisation/exécution
+$ pep8 main.py
+</code></pre>
+<h3 id="sources">Sources</h3>
+<p>Ce document a été fortement inspiré du site <a href="http://sametmax.com/le-pep8-en-resume/">Sam et Max</a> qui explique le Python avec humour, et surtout de manière très accessible .</p>
+<p>Voici quelques détails sur le <a href="http://python.wikia.com/wiki/PEP8">fonctionnement de pep8</a> en Python.</p>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,13 @@
+.idea/
+/src/res/postgres_password.txt
+**/*.aux
+**/*.log
+**/*.fdb_latexmk
+**/*.fls
+**/*.toc
+**/*.out
+**/*.glg
+**/*.glo
+**/*.gls
+**/*.glsdefs
+**/*.ist

@@ -1,0 +1,95 @@
+\section{Rôle des fichiers de configuration}
+
+Les fichiers de configuration sont au cœur du fonctionnement du logiciel. Renseignés par l'utilisateur, ils formalisent le traitement souhaité sur les données ainsi que leur conditions d'import. On peut donc énoncer les points nécessaires que doivent respecter les fichiers de configuration. Ainsi, l'utilisateur doit être en mesure, à travers ces fichiers :
+
+\begin{itemize}
+  \item d'exprimer simplement les pré-traitements et les conditions d'import;
+  \item de spécifier le tout de manière assez formalisée afin que le fichier, ensuite lu par le programme, ne soit pas ambigü;
+  \item d'omettre des informations lorsque c'est possible, ce qui correspond à une délégation implicite au programme de certaines tâches.
+\end{itemize}
+
+\section{Profil utilisateur}
+
+L'utilisateur final doit répondre à certains critères. Ces prérequis permettent de vérifier que l'utilisateur sera en mesure d'utiliser correctement le programme en suivant simplement le manuel utilisateur.
+
+Ainsi l'utilisateur doit être capable, au minimum, d'utiliser basiquement la ligne de commande. C'est souhaitable afin de pouvoir lancer les scripts. Il doit également, si possible, être apte à naviguer dans l'arborescence voire effectuer des manipulations courantes sur les fichiers (déplacement, édition).
+
+De cette manière, le logiciel peut tout-à-fait être utilisé par une personne qui ne développe pas.
+
+\section{Fichier général de configuration}
+
+Ce fichier, séparé des paramètres d'import spécifiques à chaque donnée, contient les paramètres communs à toutes les données. Ils sont d'une importance très variables : caractère visuel de séparation utilisé par les logs et \bsc{\gls{IP}}* de la base de données, par exemple.
+
+Dans un logiciel graphique, on peut se représenter ce fichier de configuration comme étant la version \bsc{JSON} de l'onglet "préférences" ou "options".
+
+\section{Fichier JSON de configuration des imports}
+    \subsection{Définition d'un import}
+
+  Ce fichier a pour vocation de permettre à l'utilisateur de définir les données à importer et les traitements souhaités sur celles-ci. Face au grand nombre de sources de données qui peuvent être précisées par l'utilisateur, le défi ici consiste à construire une configuration assez souple. En effet, seule le strict nécessaire doit être précisé par l'utilisateur. En procédant de cette manière et à force de faire évoluer ce fichier de configuration, nous avons aboutit à un fichier semblable à l'exemple présenté ci-contre.
+
+  \begin{figure}
+    \centering
+    \begin{lstlisting}
+      "res": {
+        "import_mode": "controlee_nouvelle_table",
+        "params": {
+          "shortname": "epci_lamb93_2013",
+          "data_name": "epci-20131220-5m",
+          "uri": "https://osm13.openstreetmap.fr/.../epci-20131220-5m-shp.zip",
+          "schema": "geofla",
+          "table": "epci_lamb93",
+          "year": 2013,
+          "version": "epci_osm_2013",
+          "srid_source": 4326,
+          "srid_destination": 2154,
+          "bindings": [
+            {"from": "nom_epci", "type": "str:64", "to": "libelle_epci"},
+            {"from": "ptot_epci", "type": "", "to": ""}
+          ],
+          "mode":"modified"
+        }
+      }
+    \end{lstlisting}
+    \caption{Exemple de fichier de configuration des imports}
+  \end{figure}
+
+Sur cet l'exemple ci-contre, un champs de la donnée d'entrée est renommé, un est supprimé, et les autres sont conservés en l'état. En effet, un \code{"to"} vide est synonyme de suppression. Le mode \code{"modified"} précise que les autres attributs seront conservés. Il s'oppose au mode \code{"keep\_only"} qui lui ne conservera que les champs \code{"from"} précisés dans la node \code{"bindings"}.
+
+Ce type de souplesse permet de limiter le nombre de champs à renseigner. En effet, il serait extrêmement contraignant pour l'utilisateur d'avoir à préciser l'ensemble des attributs alors que seul quelques champs seront renommés ou laissés de côté. Dans le cas des données que l'on traite ici, l'intérêt est de taille car certaines données ont un nombre assez important d'attributs.
+
+    \subsection{Problème soulevé}
+
+Le fichier \bsc{JSON} de configuration des imports permet de renseigner les imports à effectuer. Cependant, même muni d'un éditeur de texte approprié, éditer un fichier \bsc{JSON} pour y ajouter de nombreux imports présente un certain nombre d'inconvénients non négligeables.
+
+\begin{itemize}
+  \item Les sources d'erreurs au niveau du formatage dûes aux copier-coller sont nombreuses : il est facile d'oublier une virgule ou une accolade fermante.
+  \item Le format \bsc{JSON}, bien que décemment espacé et indenté, ne permet pas une vue d'ensemble satisfaisante : il est difficile pour l'utilisateur de se repérer au sein du fichier.
+\end{itemize}
+
+C'est pourquoi il a fallu trouver une réponse à ces problématiques, c'est-à-dire un autre moyen de saisie de l'entrée utilisateur.
+
+    \subsection{Solution : fichier tableur et script de conversion}
+
+Le choix de ce moyen de saisie s'est porté sur une feuille de tableur, par souci de simplicité et de commodité. Une fois sa syntaxe fixée après une phase de concertation, il fallait pouvoir obtenir un fichier de configuration \bsc{JSON} à partir de ce fichier.
+
+Le script \code{excel2conf.py} vient remplir ce rôle. Il prend en entrée un ensemble de chemins absolus pointant vers des fichiers excel contenant les informations sur les imports à effectuer. Ce script va produire, pour chacun de ces fichiers tableur un équivalent \bsc{JSON}. Les fichiers \bsc{JSON} alors produits pourront ensuite être fournis au système de la même manière qu'un fichier d'import réalisé manuellement.
+
+Afin de mener à bien cette tâche, le script se repose sur la bibliothèque \code{xlrd}, qui lui permet de parcourir le fichier tableur. De cette manière, chaque feuille correspondant à un mode d'import valide (nouvelle table ou table existante) est parcourue. Au sein de ces feuilles, chaque ligne correspond à un import. Il devient alors très visuel et facile de remplir les imports souhaités. Cette solution se révèle d'autant plus satisfaisante lorsque le nombre de données à importer augmente.
+
+Enfin, il est possible, et judicieux, de vérifier les fichiers \bsc{JSON} produits par le script avant de les fournir au programme. En effet, il arrive que certaines erreurs, difficilement remarquables au sein du tableur, apparaissent de façon beaucoup plus flagrante en \bsc{JSON}. On peut par exemple pointer du doigt les sauts de ligne issus de copier-coller, bien visibles en tant qu'\code{\textbackslash n} dans le fichier de configuration \bsc{JSON} produit.
+
+\section{Fichier répertoriant les imports effectués}
+
+Une fois un fichier de configuration des imports obtenu et le programme principal lancé, toutes les données correspondant aux entrées du fichier de configuration des imports n'ont pas toutes subi le même traitement. Par exemple, l'\gls{URI}* fournie par l'utilisateur peut tout à fait être momentanément inaccessible ou erronée. De ce fait, chaque ressource aboutit à un stade final qui lui est propre :
+
+\begin{itemize}
+  \item non récupérée, ressource inaccessible via l'URI renseignée~;
+  \item récupérée avec succès, mais format de compression non géré par un exécutable, disponible sur le système, auxquel la bibliothèque \code{patool} puisse faire appel~;
+  \item récupérée et extraite, mais donnée souhaitée introuvable au sein de l'arborescence~;
+  \item succès du parsage, des modifications structurelles et de la construction des requêtes mais échec au niveau de l'import en base de données~;
+  \item chaîne complète de succès aboutissant à un import effectif en base de données.
+\end{itemize}
+
+La cause d'un échec fait l'objet de détails dans les logs, ce qui permet de la corriger avant le lancement suivant. Dès lors, la reprise s'effectuera à partir de la dernière étape réussie. C'est très facile de connaître le statut en se basant sur le système de fichiers pour les étapes de téléchargement de de décompression.
+
+Cependant ce n'est pas le cas pour l'étape d'import en base. Afin de palier à ce problème, un fichier, accessible à l'utilisateur est placé dans le même répertoire que le fichier de configuration des imports. Il retient chaque donnée importée, ce qui permettra à l'utilisateur de connaître facilement les imports finalement effectués. De même, s'il a besoin d'importer à nouveau une donnée il lui suffit de supprimer la ligne correspondant à cette donnée au sein de ce fichier.

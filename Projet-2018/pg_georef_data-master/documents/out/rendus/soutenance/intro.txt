@@ -1,0 +1,16 @@
+
+Intitulé
+
+Tuteurs
+
+De plus en plus de données à disposition du grand public et de la recherche.
+
+Ces données open-data sont de natures différentes, sous des formats divers et plus ou moins formalisés.
+
+Intérêt : collecter les données pertinentes au vu des recherches menées afin de d'en avoir un accès centralisé.
+
+Raison du développement d'un nouvel outil, à partir de zéro :
+
+- Acquisition de connaissances sur les bibliothèques Python manipulant des données géoréférencées.
+- Maîtrise totale du système utilisé dans sa construction et son utilisation.
+

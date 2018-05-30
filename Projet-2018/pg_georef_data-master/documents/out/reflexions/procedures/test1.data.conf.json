@@ -1,0 +1,18 @@
+{
+    "res": [
+        {
+            "import_mode": "controlee_nouvelle_table",
+            "params": {
+                "schema": "dpt",
+                "data_name": "",
+                "uri": "file:///home/florian-stage/Téléchargements/fichiersShape/loire.zip",
+                "srid_source": "",
+                "table": "loire",
+                "shortname": "42-loire",
+                "year": 2010,
+                "srid_destination": "",
+                "version": ""
+            }
+        }
+    ]
+}

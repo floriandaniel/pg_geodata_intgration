@@ -1,0 +1,394 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="fr" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="fr" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>src.pre_processing.fileInfo &mdash; Documentation geodata integration 1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Recherche" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> geodata integration
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../users.html">Utilisateurs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../autodoc.html">Module «&nbsp;pre_processing&nbsp;»</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../autodoc1.html">Page d’autodocumentation 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developers.html">Espace «&nbsp;développeurs&nbsp;»</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tests.html">Tests d’intégration</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">geodata integration</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Code du module</a> &raquo;</li>
+        
+      <li>src.pre_processing.fileInfo</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Code source de src.pre_processing.fileInfo</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/python3</span>
+<span class="kn">from</span> <span class="nn">hurry.filesize</span> <span class="k">import</span> <span class="n">size</span><span class="p">,</span> <span class="n">alternative</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">magic</span>
+<span class="kn">import</span> <span class="nn">mimetypes</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">isdir</span>
+
+<span class="c1"># IMPORTS</span>
+
+<span class="kn">from</span> <span class="nn">..utils.folder</span> <span class="k">import</span> <span class="n">get_files_directory</span>
+
+<span class="c1"># -------INFO FILE-------</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implémentation de la proclamation de la bonne parole.</span>
+<span class="sd">    Usage</span>
+<span class="sd">    &gt;&gt;&gt; from sm_lib import proclamer</span>
+<span class="sd">    &gt;&gt;&gt; proclamer()</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;file_info&#39;</span><span class="p">,</span><span class="s1">&#39;real_file&#39;</span><span class="p">,</span><span class="s1">&#39;file_name&#39;</span><span class="p">,</span><span class="s1">&#39;file_extension&#39;</span><span class="p">,</span><span class="s1">&#39;file_size&#39;</span><span class="p">,</span><span class="s1">&#39;file_count_sheets&#39;</span><span class="p">,</span><span class="s1">&#39;path_folder&#39;</span><span class="p">,</span><span class="s1">&#39;display_info&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="file_info"><a class="viewcode-back" href="../../../users.html#src.pre_processing.fileInfo.file_info">[docs]</a><span class="k">def</span> <span class="nf">file_info</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Affiche les informations d&#39;un document (nom, taille, extension, ...)</span>
+
+<span class="sd">    :param file_path: chemin du fichier ou du dossier</span>
+<span class="sd">    :type file_path: ``str``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># check if it&#39;s an excel file</span>
+    <span class="c1"># make a config file with spreadsheets formats</span>
+    <span class="c1"># là ils sont codés en dur</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">isdir</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="n">get_files_directory</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                <span class="n">display_info</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">real_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+                <span class="n">display_info</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="s1">&#39;File not found.&#39;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s1">&#39;Unknown error.&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="real_file"><a class="viewcode-back" href="../../../developers.html#src.pre_processing.fileInfo.real_file">[docs]</a><span class="k">def</span> <span class="nf">real_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Indique si le fichier existe dans l&#39;arborescence indiquée en paramètre.</span>
+
+<span class="sd">    :param file_path: chemin du fichier cible</span>
+<span class="sd">    :type file_path: str</span>
+<span class="sd">    :return: vrai si le file_path est un fichier,</span>
+<span class="sd">        une exception dnas les autres cas</span>
+<span class="sd">    :rtype: ``bool``</span>
+
+<span class="sd">    :raises FileNotFoundError: le fichier n&#39;a pas été trouvé</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;File not found et ouais !!!&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="file_name"><a class="viewcode-back" href="../../../developers.html#src.pre_processing.fileInfo.file_name">[docs]</a><span class="k">def</span> <span class="nf">file_name</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retourne le nom du fichier, sans l&#39;extension</span>
+
+<span class="sd">    :param file_path: chemin du fichier cible</span>
+<span class="sd">    :type file_path: str</span>
+<span class="sd">    :return: le nom du fichier indiqué en paramètre</span>
+<span class="sd">    :rtype: ``str``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">name</span></div>
+
+
+<div class="viewcode-block" id="file_extension"><a class="viewcode-back" href="../../../developers.html#src.pre_processing.fileInfo.file_extension">[docs]</a><span class="k">def</span> <span class="nf">file_extension</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Indique l&#39;extension d&#39;un fichier. Dans notre cas, on considère le suffixe comme tel.</span>
+
+<span class="sd">    :param file_path: chemin du fichier cible</span>
+<span class="sd">    :type file_path: str</span>
+<span class="sd">    :return: l&#39;enxtension du fihcier</span>
+<span class="sd">    :rtype: ``str``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">file_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">file_extension</span></div>
+
+
+<div class="viewcode-block" id="file_size"><a class="viewcode-back" href="../../../developers.html#src.pre_processing.fileInfo.file_size">[docs]</a><span class="k">def</span> <span class="nf">file_size</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    La taille du fichier en bits, et en unité conventionnelle plus lisible pour l&#39;utilisateur.</span>
+
+<span class="sd">    :param file_path: chemin du fichier cible</span>
+<span class="sd">    :type file_path: str</span>
+<span class="sd">    :return: la taille du fichier en bits et dans une unité à l&#39;échelle (Mio,Gio,Tio)</span>
+<span class="sd">    :rtype: ``float``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sizeBytes</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+    <span class="n">readingSize</span> <span class="o">=</span> <span class="n">size</span><span class="p">(</span><span class="n">sizeBytes</span><span class="p">,</span> <span class="n">system</span><span class="o">=</span><span class="n">alternative</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sizeBytes</span><span class="p">,</span> <span class="n">readingSize</span></div>
+
+
+<div class="viewcode-block" id="file_count_sheets"><a class="viewcode-back" href="../../../developers.html#src.pre_processing.fileInfo.file_count_sheets">[docs]</a><span class="k">def</span> <span class="nf">file_count_sheets</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Indique le nombre de feuilles si le fichier est un tableau</span>
+
+<span class="sd">    :param file_path: chemin du fichier cible</span>
+<span class="sd">    :type file_path: str</span>
+<span class="sd">    :return: nombre de feuilles pour les fichiers Excel et autres(.xls, ...)</span>
+<span class="sd">    :rtype: ``int``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xl</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+    <span class="n">countSheets</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">xl</span><span class="o">.</span><span class="n">sheet_names</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">countSheets</span></div>
+
+
+<div class="viewcode-block" id="path_folder"><a class="viewcode-back" href="../../../developers.html#src.pre_processing.fileInfo.path_folder">[docs]</a><span class="k">def</span> <span class="nf">path_folder</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Indique le chemin absolu d&#39;un fihcier passé en paramètre</span>
+
+<span class="sd">    :param file_path: chemin du fichier cible</span>
+<span class="sd">    :type file_path: str</span>
+<span class="sd">    :return: une chaîne de caractères étant le chémin absolu</span>
+<span class="sd">    :rtype: ``str``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">path_folder</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="n">abspath</span><span class="p">(</span><span class="n">file_path</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">path_folder</span></div>
+
+
+<div class="viewcode-block" id="display_info"><a class="viewcode-back" href="../../../developers.html#src.pre_processing.fileInfo.display_info">[docs]</a><span class="k">def</span> <span class="nf">display_info</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Affiche les les informations dans la sortie standard</span>
+
+<span class="sd">    :param file_path: chemin du fichier cible</span>
+<span class="sd">    :type file_path: str</span>
+<span class="sd">    :return: une chaîne de caractères regroupant les prinicpales informations du fichier</span>
+<span class="sd">    :rtype: ``str``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">file_name</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+    <span class="n">extension</span> <span class="o">=</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+    <span class="n">size_bytes</span><span class="p">,</span> <span class="n">size_unit</span> <span class="o">=</span> <span class="n">file_size</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;------&quot;</span><span class="o">+</span><span class="n">file_path</span><span class="o">+</span><span class="s2">&quot;------&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;name : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;type : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">extension</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;size : </span><span class="si">{}</span><span class="s2"> (</span><span class="si">{}</span><span class="s2"> bytes)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">size_unit</span><span class="p">,</span> <span class="n">size_bytes</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">file_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">&quot;.xls&quot;</span><span class="p">,</span> <span class="s2">&quot;.xlsx&quot;</span><span class="p">)):</span>
+        <span class="n">sheets_count</span> <span class="o">=</span> <span class="n">file_count_sheets</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;number of sheets : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sheets_count</span><span class="p">))</span></div>
+
+
+<span class="c1"># Exemples d&#39;utilisation de la méthode file_info</span>
+
+<span class="c1"># file_info(&quot;memory.png&quot;)</span>
+<span class="c1"># file_info(&quot;file1.csv&quot;)</span>
+<span class="c1"># file_info(&quot;fileInfo.py&quot;)</span>
+<span class="c1"># file_info(&quot;fileOut.csv&quot;)</span>
+<span class="c1"># file_info(&quot;memory.png&quot;)</span>
+<span class="c1"># file_info(&quot;memorydq.png&quot;)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Florian DANIEL.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1.0',
+            LANGUAGE:'fr',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../../_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
