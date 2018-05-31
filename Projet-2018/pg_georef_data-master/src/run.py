@@ -14,7 +14,8 @@ import urllib, geojson, gdal, subprocess
 from fiona.crs import to_string
 from osgeo import ogr,gdal,osr
 from sqlalchemy_utils import create_database,drop_database,database_exists
-
+import matplotlib.pyplot as plt
+from src.database import import_export
 
 
 
@@ -96,27 +97,54 @@ print(dt2)
 print(dt3)
 
 print(type(dt1))
+print(type(dt2))
+print(type(dt3))
 
 from sqlalchemy import create_engine
 from geoalchemy2 import Geometry, WKTElement
 
 engine = create_engine('postgresql://postgres:ifsttar@137.121.74.24:5432/maps',echo=True,client_encoding='utf8')
-# # dt1.to_sql('first-geo', engine)
-dt1['geom'] = dt1['geometry'].apply(lambda x: WKTElement(x.wkt, srid=-1))
+# # # dt1.to_sql('first-geo', engine)
+# dt1['geom'] = dt1['geometry'].apply(lambda x: WKTElement(x.wkt, srid=2154))
 
-print(dt1.head())
-#drop the geometry column as it is now duplicative
-dt1.drop('geometry', 1, inplace=True)
-print(dt1.head())
+# print(dt1.head())
+# #drop the geometry column as it is now duplicative
+# dt1.drop('geometry', 1, inplace=True)
+# print(dt1.head())
 
-dt1.to_sql('gnnnnn', engine, if_exists='append', index=False, dtype={'geom': Geometry('GEOMETRY',srid=-1)})
+# dt1.to_sql('gnnnnn', engine, if_exists='append', index=False, dtype={'geom': Geometry('GEOMETRY',srid=2154)})
 
-sql= "select geom, x,y,z from your_table"
-query = ("select \"X_CHF_LIEU\", geom from gnnnnn where \"X_CHF_LIEU\"={a}").format(a=8253)
-dt45 = dt1.from_postgis(query,engine, geom_col='geom')
+# sql= "select geom, x,y,z from your_table"
+# query = ("select \"X_CHF_LIEU\", geom from gnnnnn where \"X_CHF_LIEU\"={a}").format(a=8253)
+# dt45 = dt1.from_postgis(query,engine, geom_col='geom',crs={'init': 'epsg:2154'})
 
-print(dt45.head())
 
+# print("dt1.crs = "+str(dt1.crs))
+# print(data_info.get_projection("res/geo/subjects/42-loire/42-.dbf"))
+# print(dt45.head())
+# print("dt45.crs = "+str(dt45.crs))
+
+# d = dt45.to_crs(epsg=4326) 
+# print(type(d))
+# print(d.head())
+# print("dt45.crs = "+str(d.crs))
+
+import_export.ImportFromDataframe(engine, dt1,'aloha',srid=2154)
+dfr = import_export.ExportToDataframe(engine,"gnnnnn")
+print(dfr)
+
+d = dfr.to_crs(epsg=4326)
+print(d.crs) 
+print(d)
+# d.plot()
+# dt45.plot()
+
+# plt.show()
+
+print(fiona.supported_drivers)
+
+import_export.ExportToGeojson(dfr,"a")
+# import_export.ExportToGeojson(dt2,"b")
 
 # wkt_element_1 = WKTElement('POINT(5 45)')
 # wkt_element_2 = WKTElement('POINT(5 45)', srid=4326)
@@ -125,6 +153,13 @@ print(dt45.head())
 # el = WKTElement("SRID=4326; POINT(4.1,52.0)")
 # print(el)
 
+dictionnaire = {
+    'shape':'ESRI Shapefile',
+    'geojson':'GeoJSON',
+    'mapinfo':'MapInfo File'
+}
+
+# d.to_file('1e.map', driver="MapInfo File")
 
 
 
@@ -329,52 +364,10 @@ import numpy as np
 
 
 
-# class Connexion:
-
-#     def connect(self,drivername,username= 'postgres', password='ifsttar', host='137.121.74.24',port='5432',database='maps'):
-#         print("on est dans connexion")
-#         # engine = create_engine('postgresql://postgres:ifsttar@137.121.74.24:5432/maps',echo=True,client_encoding='utf8')
-#         url = URL(drivername, username=username, password=password, host=host, port=port, database=database)
-#         engine = create_engine(url, echo=True, client_encoding='utf8')
-
-#         engine.connect()
-#         Session = sessionmaker(bind=engine)
-#         session = Session()
-#         metadata = MetaData(engine)
-#         conn = engine.connect()
-
-#         return conn, session, engine, metadata
-
-#     def disconnect(self,conn, session, engine):
-#         print("on est dans déconnexion")
-#         session.close()
-#         conn.close()
-#         engine.dispose()
 
 
-# class Database:
 
-#     def createDatabase(self,url,name_database):
-#         driver = url['driver']
-#         username = url['username']
-#         password = url['password']
-#         host = url['host']
-#         port = url['port']
-#         database = name_database
 
-#         link = "{}://{}:{}@{}:{}/{}".format(driver,username,password,host,port,database)
-        
-#         if not database_exists(link):
-#             create_database(link)
-#         else:
-#             print("Error")
-    
-
-#     def dropDatabase():
-#         print("on est dans déconnexion")
-#         session.close()
-#         conn.close()
-#         engine.dispose()
 
 
 
