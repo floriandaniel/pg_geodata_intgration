@@ -23,4 +23,7 @@ class FolderAlreadyExists(Error):
 	"""Raised when an option is defined, but any value is corresponding"""
 	pass
 
+class TmpFolderAlreadyExists(Error):
+	"""Raised when an option is defined, but any value is corresponding"""
+	pass
 

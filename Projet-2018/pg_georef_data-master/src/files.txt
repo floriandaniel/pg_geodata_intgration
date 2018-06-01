@@ -1,0 +1,1 @@
+/home/florian-stage/miniconda/envs/gd/lib/python3.5/site-packages/data_integration-0.0.1-py3.5.egg

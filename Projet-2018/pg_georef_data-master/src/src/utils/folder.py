@@ -43,7 +43,6 @@ def get_files_directory(dir_path,**kwargs) :
 					onlyfiles.append(join(dir_path,f))
 				else :
 					onlyfiles.append(f)
-		print(onlyfiles)
 	
 	return onlyfiles
 

@@ -10,21 +10,34 @@ __all__ = ['download']
 
 
 def download(link, target_folder="/srv/geodata/download/"):
+   
     """
-    Télécharge un fichier via son URL, dans un dossier cible
+	    Télécharge un fichier via son URL, dans un dossier cible
 
-    :param link: lien URL où se situe le fichier que l'on souhaite télécharger fjf fbfbf  dffj
-    :type link: ``str``
-    :param target_folder: dossier cible où va être placé le fichier téléchargé
+	    :param link: lien URL où se situe le fichier que l'on souhaite télécharger
+	    :type link: ``str``
+	    :param target_folder: dossier cible où va être placé le fichier téléchargé
 
-        * *par défault* -- ``/srv/geodata/download/``
-    :type target_folder: ``str``
+	        * *par défault* -- ``/srv/geodata/download/``
+	    
+	    :type target_folder: ``str``
 
-    :key nom_key: description
-    :return: une liste des chemins de fichiers téléchargés
-    :rtype: ``list``
+	    :key nom_key: description
+	    :return: une liste des chemins de fichiers téléchargés
+	    :rtype: ``list``
+
+	    :raises error.HTTPError: Some multi-line \
+	        exception description.
+	    
+	    :raises error.URLError: Some multi-line \
+	        exception description
 
     """
+    """
+        Salutn bnzfkbkfjzdgv
+    """
+    
+    # ['grfcv/insee.fr/filo-revenu-pauvrete-menage-2013.zip']
     try:
         # On récupère le nom du site et son domaine,
         # pour construire le nom du dossier
@@ -40,7 +53,6 @@ def download(link, target_folder="/srv/geodata/download/"):
         else:
             netloc = netloc
 
-        print("netloc = "+str(netloc))
         # s'il y a des sous domaines comme "madoc.univ-nantes.fr" on le reconstuit
 
         
@@ -52,9 +64,6 @@ def download(link, target_folder="/srv/geodata/download/"):
         inter_folder_name = '.'.join(netloc)
         inter_folder_name = add_slash2path(inter_folder_name)
         target_directory = target_folder+inter_folder_name
-
-        print("inter_folder_name = "+inter_folder_name)
-        print(target_directory)
         
         # on checke le proxy, on récupère ses infos 
         proxy = urllib.request.ProxyHandler({
@@ -63,16 +72,16 @@ def download(link, target_folder="/srv/geodata/download/"):
         opener = urllib.request.build_opener(proxy)
         urllib.request.install_opener(opener)
 
-        if not os.path.isfile(target_directory+name):
-            file_retrieved, _ = urllib.request.urlretrieve(link, name)
-        elif confirm_download_again(target_directory+name):
-            file_retrieved, _ = urllib.request.urlretrieve(link, name)
-        else:
-            return
+        # if not os.path.isfile(target_directory+name):
+        file_retrieved, _ = urllib.request.urlretrieve(link, name)
+        # elif confirm_download_again(target_directory+name):
+        #     file_retrieved, _ = urllib.request.urlretrieve(link, name)
+        # else:
+        #     return
 
         if not os.path.isdir(target_directory):
             # INFO - Un folder est créé
-            print(os.makedirs(target_directory))
+            os.makedirs(target_directory)	
 
         shutil.move(name,target_directory+name)
         res = list()

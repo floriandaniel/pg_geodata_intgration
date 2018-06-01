@@ -31,6 +31,16 @@ def file_info(file_path):
 
     :param file_path: chemin du fichier ou du dossier
     :type file_path: ``str``
+
+
+    .. ipython:: python
+
+        from src.pre_processing.fileInfo import file_info
+       
+        infos = file_info("../res/archives/81-tarn.zip")
+        infos_excel = file_info("../res/excels/commune.xls")
+        error_infos = file_info("../.e//xcels/commune.xls")
+
     """
 
     # check if it's an excel file
@@ -48,7 +58,7 @@ def file_info(file_path):
                 display_info(file_path)
 
     except FileNotFoundError as error:
-        print(error, 'File not found.')
+        print('FileNotFoundError : File not found. Check your path.')
 
     except Exception as e:
         print(e, 'Unknown error.')
@@ -70,7 +80,7 @@ def real_file(file_path):
     if os.path.isfile(file_path):
         return True
     else:
-        raise FileNotFoundError("File not found et ouais !!!")
+        raise FileNotFoundError
 
 
 def file_name(file_path):
@@ -79,6 +89,7 @@ def file_name(file_path):
 
     :param file_path: chemin du fichier cible
     :type file_path: str
+
     :return: le nom du fichier indiqué en paramètre
     :rtype: ``str``
 
