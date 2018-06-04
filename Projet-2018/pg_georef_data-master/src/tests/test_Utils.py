@@ -44,11 +44,6 @@ class UtilsTestCase(unittest.TestCase):
                 print("Veuillez trouver un autre nom, ou supprimez le dossier.")
 
 
-#    def exit() :
-
-
-
-
     init()
 
 

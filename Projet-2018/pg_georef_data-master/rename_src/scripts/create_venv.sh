@@ -58,7 +58,7 @@ function space { echo -e "\n\n"; }
 #
 ########################################################
 
-venv_name="gd"
+venv_name="testFinal"
 venv_filename="$venv_name.yml"
 res_dir="$(dirname $(realpath $0))/../res"
 venv_file_path="$res_dir/$venv_filename"

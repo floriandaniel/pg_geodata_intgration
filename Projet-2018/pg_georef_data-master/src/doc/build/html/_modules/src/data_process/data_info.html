@@ -1,0 +1,524 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="fr" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="fr" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>src.data_process.data_info &mdash; Documentation geodata integration 1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Recherche" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> geodata integration
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html#titre-de-page">Titre de page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html#id1">Titre de page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../users.html">Utilisateurs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../autodoc.html">Module «&nbsp;pre_processing&nbsp;»</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../autodoc1.html">Page d’autodocumentation 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developers.html">Espace «&nbsp;développeurs&nbsp;»</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tests.html">Tests d’intégration</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">geodata integration</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Code du module</a> &raquo;</li>
+        
+      <li>src.data_process.data_info</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Code source de src.data_process.data_info</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="k">import</span> <span class="n">urlencode</span>
+<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="k">import</span> <span class="n">urlopen</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">fiona</span>
+<span class="kn">from</span> <span class="nn">dbfread</span> <span class="k">import</span> <span class="n">DBF</span>
+<span class="kn">import</span> <span class="nn">ast</span><span class="o">,</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">dbfread</span>
+<span class="kn">from</span> <span class="nn">messytables</span> <span class="k">import</span> <span class="n">type_guess</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">geopandas</span> <span class="k">import</span> <span class="n">GeoDataFrame</span>
+<span class="kn">import</span> <span class="nn">geojson</span>
+<span class="kn">from</span> <span class="nn">shapely.geometry</span> <span class="k">import</span> <span class="n">shape</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">fiona.crs</span> <span class="k">import</span> <span class="n">to_string</span>
+<span class="kn">from</span> <span class="nn">osgeo</span> <span class="k">import</span> <span class="n">ogr</span><span class="p">,</span><span class="n">gdal</span><span class="p">,</span><span class="n">osr</span>
+
+<span class="kn">from</span> <span class="nn">..pre_processing.fileInfo</span> <span class="k">import</span> <span class="n">real_file</span><span class="p">,</span><span class="n">file_name</span><span class="p">,</span><span class="n">file_size</span><span class="p">,</span><span class="n">file_extension</span><span class="p">,</span><span class="n">file_count_sheets</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;data_info&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="data_info"><a class="viewcode-back" href="../../../users.html#src.data_process.data_info.data_info">[docs]</a><span class="k">def</span> <span class="nf">data_info</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span><span class="n">position_depart</span><span class="p">,</span><span class="n">position_fin</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Afficher les informations relatives à un sous-tableau dans un fichier, sélectionné grâce à des positions.</span>
+
+<span class="sd">    :param file_path: chemin du fichier dont l&#39;on veut obtenir des informations</span>
+<span class="sd">    :type file_path: ``str``</span>
+<span class="sd">    :param position_depart: représente les coordonnées en haut à gauche du tableau que l&#39;on veut sélectionné</span>
+<span class="sd">    :type position_depart: ``str``</span>
+
+<span class="sd">    :param position_fin: représente les coordonnées en bas à droite du tableau que l&#39;on veut sélectionné</span>
+<span class="sd">    :type position_fin: ``str``</span>
+
+<span class="sd">    :key worksheet: Précise la feuille que l&#39;on veut extraire dans un fichier tableur</span>
+
+<span class="sd">        * *manual* (``str``) -- Place l&#39;archive dans un dossier comportant le nom de l&#39;</span>
+
+<span class="sd">        * *auto* (``str``) -- Additional content</span>
+
+<span class="sd">    :key type: Précise le type de fihcier que l&#39;on veut extraire</span>
+
+<span class="sd">        * *csv* (``str``) -- Fichier CSV (\*.csv)</span>
+
+<span class="sd">        * *excel* (``str``) -- Fichier tableur Excel (\*.xls,\*.xlsx)</span>
+
+<span class="sd">        * *geo* (``str``) -- Fichier géographique (\*.shp,\*tab,\*.geojson, ...)</span>
+
+<span class="sd">    .. ipython:: python</span>
+<span class="sd">    </span>
+<span class="sd">        from src.data_process.data_info import data_info</span>
+
+<span class="sd">        di = data_info(&quot;../res/geo/subjects/42-loire/42-.shp&quot;,&quot;A,1&quot;,&quot;C,4&quot;,type=&quot;geo&quot;)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">type_of_file</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span>
+    <span class="n">sheet</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">is_geo</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+    <span class="k">if</span> <span class="n">type_of_file</span> <span class="o">==</span> <span class="s2">&quot;csv&quot;</span><span class="p">:</span>
+        <span class="n">dtframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">type_of_file</span> <span class="o">==</span> <span class="s2">&quot;excel&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;worksheet&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">sheet</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;worksheet&quot;</span><span class="p">)</span>
+            <span class="n">dtframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span><span class="n">sheet_name</span><span class="o">=</span><span class="n">sheet</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">type_of_file</span> <span class="o">==</span> <span class="s2">&quot;geo&quot;</span><span class="p">:</span>
+        <span class="n">dtframe</span> <span class="o">=</span> <span class="n">GeoDataFrame</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="n">is_geo</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Maybe error&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># on prend les 5 premières lignes</span>
+    <span class="c1"># dtframe2 = dtframe.head()</span>
+
+    <span class="c1"># on récupère le nom des colonnes</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dtframe</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+    <span class="c1"># on transforme les paramètres en indices de lignes et de colonnes</span>
+    <span class="n">col_d</span><span class="p">,</span><span class="n">row_d</span> <span class="o">=</span> <span class="n">coord_accepted</span><span class="p">(</span><span class="n">position_depart</span><span class="p">)</span>
+    <span class="n">col_f</span><span class="p">,</span><span class="n">row_f</span> <span class="o">=</span> <span class="n">coord_accepted</span><span class="p">(</span><span class="n">position_fin</span><span class="p">)</span>
+    
+
+    <span class="n">col_d_name</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="n">col_d</span><span class="p">]</span> 
+    <span class="n">col_f_name</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="n">col_f</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        
+    <span class="c1"># on sélectionne un sous-tableau, qui devient un dataframe</span>
+    <span class="n">dtframe</span> <span class="o">=</span> <span class="n">dtframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">row_d</span><span class="p">:</span><span class="n">row_f</span><span class="p">,</span> <span class="n">col_d_name</span><span class="p">:</span><span class="n">col_f_name</span><span class="p">]</span>
+    
+    
+    <span class="c1"># on détecte les types de chaque colonne</span>
+    <span class="n">types</span> <span class="o">=</span> <span class="n">detect_types</span><span class="p">(</span><span class="n">dtframe</span><span class="p">)</span>
+
+
+    <span class="n">cols</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="n">col_d</span><span class="p">:</span><span class="n">col_f</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+    
+
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;----- Nombre de lignes -----&quot;</span><span class="p">)</span>
+    <span class="n">number_of_rows</span> <span class="o">=</span> <span class="n">row_f</span><span class="o">-</span><span class="n">row_d</span><span class="o">+</span><span class="mi">1</span>
+    <span class="n">number_of_cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Rows : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">number_of_rows</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Columns : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">number_of_cols</span><span class="p">))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;----- Attributs/types -----&quot;</span><span class="p">)</span>
+
+    <span class="c1"># on affiche les types de chaque colonne</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">types</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;----- Géographie -----&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">is_geo</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fichier géographique : oui&quot;</span><span class="p">)</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">epsg</span><span class="p">,</span> <span class="n">url_epsg</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span> <span class="n">scope</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">get_projection</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;----- Projection -----&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Name : </span><span class="si">{}</span><span class="s2"> (epsg:</span><span class="si">{}</span><span class="s2">) -- </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">epsg</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
+
+        <span class="n">visible_url</span> <span class="o">=</span> <span class="n">url_epsg</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+        <span class="n">visible_url</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">visible_url</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">:])</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;URL : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">visible_url</span> <span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Area and scope : </span><span class="si">{}</span><span class="s2"> </span><span class="se">\n</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">area</span><span class="p">,</span><span class="n">scope</span><span class="p">))</span>
+    <span class="k">else</span> <span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fichier géographique : non&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">can_evaluate</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">string</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="p">:</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="s2">&quot;e&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">detect_types</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    
+
+    <span class="c1"># on créé les dataframes suivant les types de fichier</span>
+
+    <span class="n">real_dataframe</span> <span class="o">=</span> <span class="n">results</span>
+
+    <span class="n">classement</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">list_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">real_dataframe</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">list_columns</span> <span class="p">:</span>
+        <span class="n">dico</span> <span class="o">=</span><span class="p">{}</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="n">real_dataframe</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="c1"># print(&quot;colonne, items = &quot;+str(column)+&quot; &quot;+str(items))</span>
+        
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+            
+            <span class="n">item</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="c1"># print(&quot;item &quot;+str(item))</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="c1"># print(&quot;item after replace = &quot;+item)</span>
+            <span class="n">typef</span> <span class="o">=</span> <span class="n">can_evaluate</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="c1"># print(&quot;typef = &quot;+str(typef))</span>
+
+            <span class="k">if</span> <span class="n">typef</span> <span class="ow">in</span> <span class="n">dico</span><span class="p">:</span>
+                <span class="n">dico</span><span class="p">[</span><span class="n">typef</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># print(&quot;typef = &quot;+str(typef))</span>
+                <span class="n">dico</span><span class="p">[</span><span class="n">typef</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    
+        <span class="c1"># print(&quot;\ndic ==&quot;+str(dico)+&quot;\n&quot;)</span>
+        <span class="n">typed</span> <span class="o">=</span> <span class="n">determine_final_type</span><span class="p">(</span><span class="n">dico</span><span class="p">)</span>
+        <span class="n">typed</span> <span class="o">=</span> <span class="n">typed</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)</span>
+        <span class="n">classement</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">typed</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    
+    <span class="k">return</span> <span class="n">classement</span>
+
+
+<span class="k">def</span> <span class="nf">determine_final_type</span><span class="p">(</span><span class="n">dico</span><span class="p">):</span>
+    <span class="c1"># on trie le dictionnaire qu&#39;on nous a donné en paramètre</span>
+    <span class="n">s_data</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">dico</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># on veut récupérer la valeur qui a servi de clé pour le dictionnaire</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">s_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="k">def</span> <span class="nf">get_projection</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+
+    <span class="n">wkt</span> <span class="o">=</span> <span class="n">proj42wkt</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+    <span class="n">name</span><span class="p">,</span> <span class="n">epsg</span><span class="p">,</span> <span class="n">url_epsg</span> <span class="o">=</span> <span class="n">wkt2srid</span><span class="p">(</span><span class="n">wkt</span><span class="p">)</span>
+    <span class="n">area</span><span class="p">,</span> <span class="n">scope</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">get_info_epsg</span><span class="p">(</span><span class="n">url_epsg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="n">epsg</span><span class="p">,</span> <span class="n">url_epsg</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span> <span class="n">scope</span><span class="p">,</span> <span class="n">n</span>
+
+
+
+<span class="k">def</span> <span class="nf">proj42wkt</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+
+    <span class="n">c</span> <span class="o">=</span> <span class="n">fiona</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+    <span class="s2">&quot;res/geo/subjects/42-loire/42-.dbf&quot;</span>
+    <span class="n">prj4</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
+
+    <span class="n">sr</span> <span class="o">=</span> <span class="n">osr</span><span class="o">.</span><span class="n">SpatialReference</span><span class="p">()</span>
+    <span class="n">sr</span><span class="o">.</span><span class="n">ImportFromProj4</span><span class="p">(</span><span class="n">prj4</span><span class="p">)</span>
+    <span class="n">wkt</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">ExportToWkt</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">wkt</span>
+
+
+<span class="k">def</span> <span class="nf">wkt2srid</span><span class="p">(</span><span class="n">wkt</span><span class="p">):</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="n">urlencode</span><span class="p">({</span>
+        <span class="s1">&#39;exact&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="s1">&#39;wkt&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;terms&#39;</span><span class="p">:</span> <span class="n">wkt</span><span class="p">})</span>
+
+    <span class="n">webres</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="s1">&#39;http://prj2epsg.org/search.json&#39;</span><span class="p">,</span> <span class="n">query</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+    <span class="n">jres</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">webres</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+
+    <span class="c1"># on s&#39;occupe que du premier système de référence spatial (le principal) </span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">jres</span><span class="p">[</span><span class="s1">&#39;codes&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+    <span class="n">epsg</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">]</span>
+    <span class="n">url_epsg</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="n">epsg</span><span class="p">,</span> <span class="n">url_epsg</span>
+
+
+<span class="k">def</span> <span class="nf">get_info_epsg</span><span class="p">(</span><span class="n">url_epsg</span><span class="p">):</span>
+
+    <span class="k">with</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">url_epsg</span><span class="p">)</span> <span class="k">as</span> <span class="n">url</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+
+    <span class="n">area</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;area&#39;</span><span class="p">]</span>
+    <span class="n">scope</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;scope&#39;</span><span class="p">]</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">area</span><span class="p">,</span> <span class="n">scope</span><span class="p">,</span> <span class="n">n</span>
+
+<span class="k">def</span> <span class="nf">info_features</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Only for geodata files</span>
+<span class="sd">    .dat,excel,xls ne marche pas</span>
+<span class="sd">    .mid .mif .shp .dbf .shx .tab</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># on créé un GeoDataFrame à partir du fichier</span>
+    <span class="n">gdf</span> <span class="o">=</span> <span class="n">GeoDataFrame</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+    <span class="n">d</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+    <span class="c1"># on charge le json</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+    <span class="c1"># on affiche de composants graphiques (POLYGON, LINESTRING, ...)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dat</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]))</span>
+
+    <span class="c1"># on affiche le nombre de POLYGONS, LINESTRING, ...</span>
+    <span class="n">charts</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">dat</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]:</span>
+        <span class="n">one_type</span> <span class="o">=</span> <span class="n">feature</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">one_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">charts</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">charts</span><span class="p">[</span><span class="n">one_type</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">charts</span><span class="p">[</span><span class="n">one_type</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># on affiche le dictionnaire associant forme et nombre d&#39;apparitions</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">charts</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">coord_accepted</span><span class="p">(</span><span class="n">coord</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Analyse de chaînes pour les coordonnées</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Principe général un projet --&gt;</span>
+<span class="sd">        on veut que l&#39;utilisateur signale une position.</span>
+<span class="sd">        On s&#39;inspire de celle d&#39;excel et LibreCalc. </span>
+<span class="sd">        Des lettres pour les colonnes, des nombres pour les lignes</span>
+
+<span class="sd">        Attention plus de 26 colonnes, on passe à AA, le numéro de colonnes sera 27.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">&#39;[a-zA-Z]*,[0-9]*&#39;</span><span class="p">,</span> <span class="n">coord</span><span class="p">)):</span>
+        <span class="c1"># Raise errors</span>
+        <span class="k">pass</span>
+
+    <span class="n">coord</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">tab</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="n">index_col</span> <span class="o">=</span> <span class="n">tab</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
+    <span class="n">index_line</span> <span class="o">=</span> <span class="n">tab</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    
+
+    <span class="n">alphabet</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="s1">&#39;c&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="s1">&#39;d&#39;</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span><span class="s1">&#39;e&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="s1">&#39;f&#39;</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span><span class="s1">&#39;h&#39;</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span><span class="s1">&#39;i&#39;</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span>
+        <span class="s1">&#39;j&#39;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">:</span><span class="mi">11</span><span class="p">,</span><span class="s1">&#39;l&#39;</span><span class="p">:</span><span class="mi">12</span><span class="p">,</span><span class="s1">&#39;m&#39;</span><span class="p">:</span><span class="mi">13</span><span class="p">,</span><span class="s1">&#39;n&#39;</span><span class="p">:</span><span class="mi">14</span><span class="p">,</span><span class="s1">&#39;o&#39;</span><span class="p">:</span><span class="mi">15</span><span class="p">,</span><span class="s1">&#39;p&#39;</span><span class="p">:</span><span class="mi">16</span><span class="p">,</span><span class="s1">&#39;q&#39;</span><span class="p">:</span><span class="mi">17</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">:</span><span class="mi">18</span><span class="p">,</span><span class="s1">&#39;s&#39;</span><span class="p">:</span><span class="mi">19</span><span class="p">,</span>
+        <span class="s1">&#39;t&#39;</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span><span class="s1">&#39;u&#39;</span><span class="p">:</span><span class="mi">21</span><span class="p">,</span><span class="s1">&#39;v&#39;</span><span class="p">:</span><span class="mi">22</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="mi">23</span><span class="p">,</span><span class="s1">&#39;x&#39;</span><span class="p">:</span><span class="mi">24</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">:</span><span class="mi">25</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">:</span><span class="mi">26</span><span class="p">}</span>
+
+
+
+    <span class="n">value_word</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">index_col</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>  
+        <span class="k">for</span> <span class="n">letter</span> <span class="ow">in</span> <span class="n">index_col</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">value_word</span> <span class="o">+=</span> <span class="n">alphabet</span><span class="p">[</span><span class="n">letter</span><span class="p">]</span><span class="o">*</span><span class="mi">26</span>
+    
+    <span class="n">value_word</span> <span class="o">+=</span> <span class="n">alphabet</span><span class="p">[</span><span class="n">index_col</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    
+    
+    <span class="k">return</span> <span class="n">value_word</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="n">index_line</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Florian DANIEL.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1.0',
+            LANGUAGE:'fr',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../../_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

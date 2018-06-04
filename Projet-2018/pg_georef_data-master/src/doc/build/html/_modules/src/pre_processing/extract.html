@@ -79,6 +79,8 @@
             
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html#titre-de-page">Titre de page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html#id1">Titre de page</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../users.html">Utilisateurs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../autodoc.html">Module «&nbsp;pre_processing&nbsp;»</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../autodoc1.html">Page d’autodocumentation 1</a></li>
@@ -233,7 +235,7 @@
 		<span class="nb">print</span><span class="p">(</span><span class="n">exception</span><span class="p">)</span>
 
 	<span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">t_error</span><span class="p">:</span>
-		<span class="nb">print</span><span class="p">(</span><span class="n">t_error</span><span class="p">,</span><span class="s2">&quot;dbdfuidf&quot;</span><span class="p">)</span>	</div>
+		<span class="nb">print</span><span class="p">(</span><span class="n">t_error</span><span class="p">,</span><span class="s2">&quot;Erreur de type.&quot;</span><span class="p">)</span>	</div>
 
 		<span class="c1"># le nom est trompeur, on pratique ici un déplacement de fichier</span>
 		<span class="c1"># onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]</span>
@@ -256,13 +258,6 @@
 
 		<span class="c1"># REMOVE TMP FOLDER</span>
 
-
-
-<span class="c1"># Vérifie si un fichier est une archive</span>
-<span class="c1"># @param String file path</span>
-
-<span class="c1"># @return bool</span>
-<span class="c1"># @return string caption</span>
 
 <span class="k">def</span> <span class="nf">is_compressed</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="p">:</span>
 	<span class="k">try</span> <span class="p">:</span>

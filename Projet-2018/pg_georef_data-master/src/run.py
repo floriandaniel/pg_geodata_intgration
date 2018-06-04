@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+"""
 from geopandas import GeoDataFrame
 from src.pre_processing import download,fileInfo,extract
 from src.data_process import data_info, data_view
@@ -16,9 +17,11 @@ from osgeo import ogr,gdal,osr
 from sqlalchemy_utils import create_database,drop_database,database_exists
 import matplotlib.pyplot as plt
 from src.database import import_export
+"""
+from src import file_info
 
 
-
+file_info("res/archives/81-tarn.zip")
 # EXEMPLES D'UTILISATION DES METHODES
 # data_view.data_view("res/excels/commune.xls",5,5,5,type="excel",worksheet="Donnees")
 # data_view.data_view("data.geojson",5,5,10,type="geo")
@@ -162,17 +165,12 @@ from src.database import import_export
 # # d.to_file('1e.map', driver="MapInfo File")
 
 
-file_path = "res/archives/81-tarn.zip"
-fileInfo.file_info("res/geo/subjects/42-loire/42-.shp")
-extract("res/archives/file.gz", target_folder="./")
+# file_path = "res/archives/81-tarn.zip"
+# fileInfo.file_info("res/geo/subjects/42-loire/42-.shp")
+# extract("res/archives/file.gz", target_folder="./")
 
-
-
-
-
-
-
-
+# data_view.data_view("res/excels/commune.xls",nb_rows_beg=5,nb_rows_end=5,nb_col_max = 3,type="excel",worksheet="Donnees")
+# data_info.data_info("res/geo/subjects/42-loire/42-.dbf","A,2","C,4",type="geo")
 
 
 

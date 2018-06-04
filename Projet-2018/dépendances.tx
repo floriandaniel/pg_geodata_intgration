@@ -1,0 +1,30 @@
+pip install --upgrade pip
+
+pip install geopandas
+pip install hurry.filesize
+pip install python-magic
+pip install testtool
+pip install patool
+simpledbf --> pas besoin
+dbf read --> pas besoin
+messy tables.type_guess --> pas besoin
+geojson --> pas besoin
+(osgeo)
+pip install GeoAlchemy2
+pip install parameterized
+pip install nose
+pip install xlrd
+pip install nose-progressive
+pip install OSR
+conda install gdal
+
+---Installation ----
+conda env export 2> evironnement.yml
+conda env create -n nameofenv -f environment.yml --python=3.5
+
+---Supprimer librairie ---
+python setup.py install --record files.txt
+cat files.txt | xargs rm -rf
+
+
+

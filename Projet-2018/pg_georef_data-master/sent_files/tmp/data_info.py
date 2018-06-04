@@ -3,7 +3,6 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 import pandas as pd
 import numpy
-from simpledbf import Dbf5
 from check_kwargs import is_correct_kwargs
 from dbfread import DBF
 import ast, re

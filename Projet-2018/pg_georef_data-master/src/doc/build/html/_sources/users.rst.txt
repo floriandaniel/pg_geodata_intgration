@@ -1,8 +1,6 @@
 **************************
 Utilisateurs
 **************************
-.. _ipython_directive:
-
 
 
 pre_processing 
@@ -33,6 +31,15 @@ data_process
 View a file
 ===========
 
+.. autofunction:: src.data_process.data_view.data_view
+
 Infos of file
 =============
+
+.. autofunction:: src.data_process.data_info.data_info
+
+Represent an array with a DataFrame
+=======================================================
+
+.. autofunction:: src.data_process.in_memory.in_memory
 

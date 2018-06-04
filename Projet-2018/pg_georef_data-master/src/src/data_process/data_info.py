@@ -3,7 +3,6 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 import pandas as pd
 import numpy
-from simpledbf import Dbf5
 import fiona
 from dbfread import DBF
 import ast, re
@@ -19,8 +18,41 @@ from osgeo import ogr,gdal,osr
 
 from ..pre_processing.fileInfo import real_file,file_name,file_size,file_extension,file_count_sheets
 
+__all__ = ['data_info']
 
 def data_info(file_path,position_depart,position_fin,**kwargs):
+    """
+    Afficher les informations relatives à un sous-tableau dans un fichier, sélectionné grâce à des positions.
+
+    :param file_path: chemin du fichier dont l'on veut obtenir des informations
+    :type file_path: ``str``
+    :param position_depart: représente les coordonnées en haut à gauche du tableau que l'on veut sélectionné
+    :type position_depart: ``str``
+
+    :param position_fin: représente les coordonnées en bas à droite du tableau que l'on veut sélectionné
+    :type position_fin: ``str``
+
+    :key worksheet: Précise la feuille que l'on veut extraire dans un fichier tableur
+
+        * *manual* (``str``) -- Place l'archive dans un dossier comportant le nom de l'
+
+        * *auto* (``str``) -- Additional content
+
+    :key type: Précise le type de fihcier que l'on veut extraire
+
+        * *csv* (``str``) -- Fichier CSV (\*.csv)
+
+        * *excel* (``str``) -- Fichier tableur Excel (\*.xls,\*.xlsx)
+
+        * *geo* (``str``) -- Fichier géographique (\*.shp,\*tab,\*.geojson, ...)
+
+    .. ipython:: python
+    
+        from src.data_process.data_info import data_info
+
+        di = data_info("../res/geo/subjects/42-loire/42-.shp","A,1","C,4",type="geo")
+
+    """
 
     type_of_file = kwargs.get("type")
     sheet = ""
@@ -40,7 +72,7 @@ def data_info(file_path,position_depart,position_fin,**kwargs):
         print("Maybe error")
     
     # on prend les 5 premières lignes
-    dtframe2 = dtframe.head()
+    # dtframe2 = dtframe.head()
 
     # on récupère le nom des colonnes
     cols = list(dtframe.columns.values)
@@ -52,14 +84,10 @@ def data_info(file_path,position_depart,position_fin,**kwargs):
 
     col_d_name = cols[col_d] 
     col_f_name = cols[col_f+1]
-    
-    # print("d  :  "+str(col_d_name))
-    # print("f  :  "+str(col_f_name))
-    
+        
     # on sélectionne un sous-tableau, qui devient un dataframe
     dtframe = dtframe.loc[row_d:row_f, col_d_name:col_f_name]
     
-    # print("cols = "+str(cols))
     
     # on détecte les types de chaque colonne
     types = detect_types(dtframe)
@@ -102,14 +130,6 @@ def data_info(file_path,position_depart,position_fin,**kwargs):
     else :
         print("Fichier géographique : non")
 
-    # Number of rows in .dbf file
-    # print("Number of rows = "+str(len(dbf)))
-
-    # Number of columns in .dbf file
-    # print("Number of columns = "+str(len(dbf.fields)))
-
-    return dtframe2
-    # ast to determine the type of an object from a string
 
 def can_evaluate(string):
     try:
@@ -124,8 +144,6 @@ def detect_types(results, **kwargs):
     # on créé les dataframes suivant les types de fichier
 
     real_dataframe = results
-    for col in real_dataframe :
-        print(str(col))
 
     classement = []
 
@@ -288,7 +306,5 @@ def coord_accepted(coord):
     
     value_word += alphabet[index_col[-1]]
     
-    print(value_word)
-
     
     return value_word-1,int(index_line)

@@ -3,16 +3,47 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 import pandas as pd
 import numpy
-from simpledbf import Dbf5
 from src.utils.check_kwargs import is_correct_kwargs
 from ..utils.exceptions import OptionNotFound,ValueNotMatchOption
 from geopandas import GeoDataFrame
 from dbfread import DBF
 
+__all__ = ['data_view']
 
 def data_view(file_path, nb_rows_beg=5, nb_rows_end=5,nb_col_max = 5,**kwargs) :
+	"""
+	Prévisualisation des premières et dernières lignes d'un fichier "tableau" 
+
+    :param file_path: chemin du fichier dont l'on veut obtenir des informations
+    :type file_path: ``str``
+    :param nb_rows_beg: nombre de lignes du début que l'on souhaite afficher (par défault, 5)
+    :type nb_rows_beg: ``int``
+
+    :param nb_rows_end: nombre de lignes de fin que l'on souhaite afficher (par défault, 5)
+    :type nb_rows_end: ``int``
+
+    :param nb_col_max: nombre de colonnes que l'on souhaite afficher (par défault, 5)
+    :type position_fin: ``int``
+
+    :key worksheet: Précise la feuille que l'on veut extraire dans un fichier tableur
+
+    :key type: Précise le type de fihcier que l'on veut extraire
+
+        * *csv* (``str``) -- Fichier CSV (\*.csv)
+
+        * *excel* (``str``) -- Fichier tableur Excel (\*.xls,\*.xlsx)
+
+        * *geo* (``str``) -- Fichier géographique (\*.shp,\*tab,\*.geojson, ...)
+
+    .. ipython:: python
+    
+        from src.data_process.data_view import data_view
+
+        di = data_view("../res/geo/subjects/42-loire/42-.shp",nb_rows_beg = 5,nb_rows_end=10,type="geo")
+
+    """
 	try:
-		set_max_columns(nb_col_max+1)
+
 		set_max_col_width(13)
 
 		print(pd.get_option('display.max_columns'))
@@ -32,19 +63,21 @@ def data_view(file_path, nb_rows_beg=5, nb_rows_end=5,nb_col_max = 5,**kwargs) :
 		else : 
 			results = pd.read_csv(file_path)
 
+		cols = list(results.columns.values)
+		max_col_name = cols[nb_col_max]
+		results = results.loc[:,:max_col_name]
+
 		head = results.head(nb_rows_beg)
 		tail = results.tail(nb_rows_end)
 		display_dataframe(head,tail)
 	
 	except OptionNotFound as onf:
-		print(onf, "v'là")
+		print(onf, "Option non trouvée.")
 
 	except ValueNotMatchOption as vnmo:
 		print(vnmo)
 
-	reset_max_columns()
 	reset_max_col_width()
-	print(pd.get_option('display.max_colwidth'))
 
 
 def set_max_columns(new_max_cols) :
